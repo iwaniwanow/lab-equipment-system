@@ -1,0 +1,63 @@
+{% extends 'equipment/base.html' %}
+
+{% block title %}Dashboard - Lab Equipment{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-4">Dashboard</h1>
+        <p class="lead">Преглед на лабораторното оборудване</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-tools"></i> Общо оборудване
+                </h5>
+                <p class="display-4">{{ total_equipment }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-check-circle"></i> Работещи
+                </h5>
+                <p class="display-4">{{ operational }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-wrench"></i> На поддръжка
+                </h5>
+                <p class="display-4">{{ maintenance }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Бързи действия</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="{% url 'equipment_create' %}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-plus-circle"></i> Добави ново оборудване
+                </a>
+                <a href="{% url 'equipment_list' %}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-list"></i> Виж всички оборудвания
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

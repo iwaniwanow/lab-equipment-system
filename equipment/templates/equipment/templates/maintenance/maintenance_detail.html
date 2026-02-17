@@ -1,0 +1,99 @@
+{% extends 'equipment/base.html' %}
+
+{% block title %}Maintenance Detail - Lab Equipment{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-5">Maintenance Record</h1>
+        <p class="text-muted">{{ maintenance.maintenance_type.name }}</p>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'maintenance_update' maintenance.pk %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Edit
+        </a>
+        <a href="{% url 'maintenance_delete' maintenance.pk %}" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Delete
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Equipment Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>ASSET Number:</strong> {{ maintenance.equipment.asset_number }}</p>
+                <p><strong>Name:</strong> {{ maintenance.equipment.name }}</p>
+                <p><strong>Category:</strong> {{ maintenance.equipment.category.name }}</p>
+                <p><strong>Location:</strong> {{ maintenance.equipment.location }}</p>
+                <a href="{% url 'equipment_detail' maintenance.equipment.pk %}" class="btn btn-sm btn-info">
+                    <i class="bi bi-box-arrow-up-right"></i> View Equipment
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">Maintenance Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Type:</strong>
+                    {% if maintenance.maintenance_type.type == 'calibration' %}
+                        <span class="badge bg-info">Calibration</span>
+                    {% elif maintenance.maintenance_type.type == 'validation' %}
+                        <span class="badge bg-primary">Validation</span>
+                    {% elif maintenance.maintenance_type.type == 'preventive' %}
+                        <span class="badge bg-success">Preventive</span>
+                    {% elif maintenance.maintenance_type.type == 'corrective' %}
+                        <span class="badge bg-warning">Corrective</span>
+                    {% else %}
+                        <span class="badge bg-danger">Repair</span>
+                    {% endif %}
+                </p>
+                <p><strong>Name:</strong> {{ maintenance.maintenance_type.name }}</p>
+                <p><strong>Frequency:</strong> {{ maintenance.maintenance_type.get_frequency_display }}</p>
+                <p><strong>Performed Date:</strong> {{ maintenance.performed_date }}</p>
+                <p><strong>Next Due Date:</strong> {{ maintenance.next_due_date }}</p>
+                <p><strong>Performed By:</strong> {{ maintenance.performed_by }}</p>
+                {% if maintenance.cost %}
+                <p><strong>Cost:</strong> {{ maintenance.cost }} {{ maintenance.currency }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Work Performed</h5>
+    </div>
+    <div class="card-body">
+        <p style="white-space: pre-wrap;">{{ maintenance.work_performed }}</p>
+    </div>
+</div>
+
+{% if maintenance.parts_used %}
+<div class="card mb-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0">Parts Used</h5>
+    </div>
+    <div class="card-body">
+        <p style="white-space: pre-wrap;">{{ maintenance.parts_used }}</p>
+    </div>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header bg-secondary text-white">
+        <h5 class="mb-0">Maintenance Type Description</h5>
+    </div>
+    <div class="card-body">
+        <p style="white-space: pre-wrap;">{{ maintenance.maintenance_type.description }}</p>
+    </div>
+</div>
+{% endblock %}

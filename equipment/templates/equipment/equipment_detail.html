@@ -1,0 +1,101 @@
+{% extends 'equipment/base.html' %}
+
+{% block title %}{{ equipment.name }} - Lab Equipment{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-5">{{ equipment.name }}</h1>
+        <p class="text-muted">ASSET: {{ equipment.asset_number }}</p>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'equipment_update' equipment.pk %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Edit
+        </a>
+        <a href="{% url 'equipment_delete' equipment.pk %}" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Delete
+        </a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Equipment Details</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Category:</strong> {{ equipment.category.name }}</p>
+                <p><strong>Manufacturer:</strong> {{ equipment.manufacturer }}</p>
+                <p><strong>Model:</strong> {{ equipment.model }}</p>
+                <p><strong>Serial Number:</strong> {{ equipment.serial_number }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Location:</strong> {{ equipment.location }}</p>
+                <p><strong>Status:</strong>
+                    {% if equipment.status == 'operational' %}
+                        <span class="badge bg-success">Operational</span>
+                    {% elif equipment.status == 'maintenance' %}
+                        <span class="badge bg-warning">Maintenance</span>
+                    {% elif equipment.status == 'calibration' %}
+                        <span class="badge bg-info">Calibration</span>
+                    {% else %}
+                        <span class="badge bg-danger">Out of Service</span>
+                    {% endif %}
+                </p>
+                <p><strong>Purchase Date:</strong> {{ equipment.purchase_date|default:"N/A" }}</p>
+            </div>
+        </div>
+        {% if equipment.notes %}
+        <hr>
+        <p><strong>Notes:</strong></p>
+        <p>{{ equipment.notes }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Recent Inspections</h5>
+            </div>
+            <div class="card-body">
+                {% if inspections %}
+                    <ul class="list-group">
+                        {% for inspection in inspections %}
+                        <li class="list-group-item">
+                            <strong>{{ inspection.inspection_type.name }}</strong><br>
+                            <small>{{ inspection.inspection_date }} - {{ inspection.status }}</small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No inspections yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">Recent Maintenance</h5>
+            </div>
+            <div class="card-body">
+                {% if maintenance_records %}
+                    <ul class="list-group">
+                        {% for record in maintenance_records %}
+                        <li class="list-group-item">
+                            <strong>{{ record.maintenance_type.name }}</strong><br>
+                            <small>{{ record.performed_date }} - {{ record.performed_by }}</small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No maintenance records yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
