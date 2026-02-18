@@ -7,3 +7,7 @@ urlpatterns = [
     path('', include('inspections.urls')),
     path('', include('maintenance.urls')),
 ]
+
+# Custom error handlers
+handler404 = 'equipment.views.custom_404'
+

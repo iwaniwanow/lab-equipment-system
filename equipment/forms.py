@@ -1,6 +1,37 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Equipment, EquipmentCategory
+from .models import Equipment, EquipmentCategory, Manufacturer
+
+
+class ManufacturerForm(forms.ModelForm):
+    class Meta:
+        model = Manufacturer
+        fields = ['name', 'country', 'website', 'contact_info']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Mettler Toledo, Sartorius'
+            }),
+            'country': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Germany, USA'
+            }),
+            'website': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://...'
+            }),
+            'contact_info': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Contact information'
+            }),
+        }
+        labels = {
+            'name': 'Manufacturer Name',
+            'country': 'Country',
+            'website': 'Website',
+            'contact_info': 'Contact Information'
+        }
 
 
 class EquipmentForm(forms.ModelForm):
@@ -8,36 +39,33 @@ class EquipmentForm(forms.ModelForm):
         model = Equipment
         fields = [
             'asset_number', 'name', 'category', 'manufacturer',
-            'model', 'serial_number', 'location', 'status',
+            'model', 'serial_number', 'location', 'required_maintenance_types',
             'purchase_date', 'notes'
         ]
         widgets = {
             'asset_number': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Напр. EQ-001'
+                'placeholder': 'e.g., EQ-001'
             }),
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Име на оборудването'
+                'placeholder': 'Equipment name'
             }),
             'category': forms.Select(attrs={'class': 'form-select'}),
-            'manufacturer': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Производител'
-            }),
+            'manufacturer': forms.Select(attrs={'class': 'form-select'}),
             'model': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Модел'
+                'placeholder': 'Model'
             }),
             'serial_number': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Сериен номер'
+                'placeholder': 'Serial number'
             }),
             'location': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Локация в лабораторията'
+                'placeholder': 'Laboratory location'
             }),
-            'status': forms.Select(attrs={'class': 'form-select'}),
+            'required_maintenance_types': forms.CheckboxSelectMultiple(),
             'purchase_date': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
@@ -45,8 +73,20 @@ class EquipmentForm(forms.ModelForm):
             'notes': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': 'Допълнителни бележки'
+                'placeholder': 'Additional notes'
             }),
+        }
+        labels = {
+            'asset_number': 'ASSET Number',
+            'name': 'Equipment Name',
+            'category': 'Category',
+            'manufacturer': 'Manufacturer',
+            'model': 'Model',
+            'serial_number': 'Serial Number',
+            'location': 'Location',
+            'required_maintenance_types': 'Required Maintenance Types',
+            'purchase_date': 'Purchase Date',
+            'notes': 'Notes'
         }
 
     def clean_asset_number(self):
@@ -57,7 +97,7 @@ class EquipmentForm(forms.ModelForm):
                 if Equipment.objects.exclude(pk=self.instance.pk).filter(
                     asset_number=asset_number
                 ).exists():
-                    raise ValidationError('ASSET номерът вече съществува.')
+                    raise ValidationError('ASSET number already exists.')
         return asset_number
 
     def clean_serial_number(self):
@@ -66,7 +106,7 @@ class EquipmentForm(forms.ModelForm):
             if Equipment.objects.exclude(pk=self.instance.pk).filter(
                 serial_number=serial_number
             ).exists():
-                raise ValidationError('Сериен номер вече съществува.')
+                raise ValidationError('Serial number already exists.')
         return serial_number
 
 
@@ -77,11 +117,15 @@ class EquipmentCategoryForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Напр. pH метър, спектрофотометър'
+                'placeholder': 'e.g., pH meter, Spectrophotometer, Balance'
             }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': 'Описание на категорията'
+                'placeholder': 'Category description'
             }),
+        }
+        labels = {
+            'name': 'Category Name',
+            'description': 'Description'
         }

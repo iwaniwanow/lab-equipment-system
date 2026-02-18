@@ -1,0 +1,91 @@
+{% extends 'equipment/base.html' %}
+
+{% block title %}{{ inspection_type.name }} - Inspection Types{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'inspection_type_list' %}">Inspection Types</a></li>
+        <li class="breadcrumb-item active">{{ inspection_type.name }}</li>
+    </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-clipboard-check"></i> {{ inspection_type.name }}</h1>
+    <div>
+        <a href="{% url 'inspection_type_update' inspection_type.pk %}" class="btn btn-secondary">
+            <i class="bi bi-pencil"></i> Edit
+        </a>
+        <a href="{% url 'inspection_type_delete' inspection_type.pk %}" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Delete
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Inspection Type Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="30%">Name:</th>
+                        <td>{{ inspection_type.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Frequency:</th>
+                        <td><span class="badge bg-success">{{ inspection_type.get_frequency_display }}</span></td>
+                    </tr>
+                    {% if inspection_type.description %}
+                    <tr>
+                        <th>Description:</th>
+                        <td>{{ inspection_type.description|linebreaks }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if inspection_type.checklist %}
+                    <tr>
+                        <th>Checklist:</th>
+                        <td>{{ inspection_type.checklist|linebreaks }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-list-check"></i> Recent Inspections ({{ inspections.count }})</h5>
+            </div>
+            <div class="card-body">
+                {% if inspections %}
+                    <ul class="list-group">
+                        {% for inspection in inspections %}
+                            <li class="list-group-item">
+                                <a href="{% url 'inspection_detail' inspection.pk %}">
+                                    {{ inspection.equipment.asset_number }} - {{ inspection.inspection_date }}
+                                </a>
+                                <br>
+                                {% if inspection.status == 'passed' %}
+                                    <span class="badge bg-success">{{ inspection.get_status_display }}</span>
+                                {% elif inspection.status == 'failed' %}
+                                    <span class="badge bg-danger">{{ inspection.get_status_display }}</span>
+                                {% else %}
+                                    <span class="badge bg-warning">{{ inspection.get_status_display }}</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No inspections yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

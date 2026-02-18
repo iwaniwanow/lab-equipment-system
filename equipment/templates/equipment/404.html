@@ -1,0 +1,38 @@
+{% extends 'equipment/base.html' %}
+
+{% block title %}404 - Page Not Found{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 text-center">
+        <div class="error-template">
+            <h1 class="display-1 text-danger">
+                <i class="bi bi-exclamation-triangle-fill"></i> 404
+            </h1>
+            <h2 class="mb-4">Oops! Page Not Found</h2>
+            <p class="lead">
+                The page you are looking for might have been removed, had its name changed,
+                or is temporarily unavailable.
+            </p>
+            <div class="mt-4">
+                <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-house-door"></i> Go to Dashboard
+                </a>
+                <a href="{% url 'equipment_list' %}" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-list"></i> View Equipment
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-template {
+        padding: 40px 15px;
+    }
+    .display-1 {
+        font-size: 10rem;
+    }
+</style>
+{% endblock %}
+

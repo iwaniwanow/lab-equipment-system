@@ -31,35 +31,46 @@
                             <i class="bi bi-house-door"></i> Dashboard
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'equipment_list' %}">
-                            <i class="bi bi-list"></i> Equipment
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="equipmentDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear"></i> Equipment
                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'equipment_list' %}">All Equipment</a></li>
+                            <li><a class="dropdown-item" href="{% url 'equipment_create' %}">Add Equipment</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'equipment_create' %}">
-                            <i class="bi bi-plus-circle"></i> Add Equipment
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'inspection_list' %}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="inspectionDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-clipboard-check"></i> Inspections
                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'inspection_list' %}">All Inspections</a></li>
+                            <li><a class="dropdown-item" href="{% url 'inspection_create' %}">Add Inspection</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'inspection_create' %}">
-                            <i class="bi bi-plus-circle"></i> Add Inspection
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'maintenance_list' %}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="maintenanceDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-wrench"></i> Maintenance
                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'maintenance_list' %}">All Maintenance</a></li>
+                            <li><a class="dropdown-item" href="{% url 'maintenance_create' %}">Add Maintenance</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'maintenance_create' %}">
-                            <i class="bi bi-plus-circle"></i> Add Maintenance
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="setupDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-tools"></i> Setup
                         </a>
+                        <ul class="dropdown-menu">
+                            <li><h6 class="dropdown-header">Equipment Setup</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'manufacturer_list' %}">Manufacturers</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category_list' %}">Categories</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Process Setup</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'maintenance_type_list' %}">Maintenance Types</a></li>
+                            <li><a class="dropdown-item" href="{% url 'inspection_type_list' %}">Inspection Types</a></li>
+                        </ul>
                     </li>
                 </ul></div>
         </div>

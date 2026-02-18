@@ -1,4 +1,5 @@
 {% extends 'equipment/base.html' %}
+{% load equipment_filters %}
 
 {% block title %}Equipment List - Lab Equipment{% endblock %}
 
@@ -71,15 +72,7 @@
                 <td>{{ eq.category.name }}</td>
                 <td>{{ eq.location }}</td>
                 <td>
-                    {% if eq.status == 'operational' %}
-                        <span class="badge bg-success">Operational</span>
-                    {% elif eq.status == 'maintenance' %}
-                        <span class="badge bg-warning">Maintenance</span>
-                    {% elif eq.status == 'calibration' %}
-                        <span class="badge bg-info">Calibration</span>
-                    {% else %}
-                        <span class="badge bg-danger">Out of Service</span>
-                    {% endif %}
+                    <span class="badge bg-{{ eq.status|status_badge }}">{{ eq.get_status_display }}</span>
                 </td>
                 <td>
                     <a href="{% url 'equipment_detail' eq.pk %}" class="btn btn-sm btn-info">

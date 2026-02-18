@@ -6,38 +6,48 @@
 <div class="row mb-4">
     <div class="col">
         <h1 class="display-4">Dashboard</h1>
-        <p class="lead">Преглед на лабораторното оборудване</p>
+        <p class="lead">Laboratory Equipment Management System Overview</p>
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-md-4">
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
         <div class="card text-white bg-primary">
             <div class="card-body">
                 <h5 class="card-title">
-                    <i class="bi bi-tools"></i> Общо оборудване
+                    <i class="bi bi-tools"></i> Total Equipment
                 </h5>
                 <p class="display-4">{{ total_equipment }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card text-white bg-success">
             <div class="card-body">
                 <h5 class="card-title">
-                    <i class="bi bi-check-circle"></i> Работещи
+                    <i class="bi bi-check-circle"></i> Operational
                 </h5>
                 <p class="display-4">{{ operational }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card text-white bg-warning">
             <div class="card-body">
                 <h5 class="card-title">
-                    <i class="bi bi-wrench"></i> На поддръжка
+                    <i class="bi bi-wrench"></i> Under Maintenance
                 </h5>
                 <p class="display-4">{{ maintenance }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-exclamation-triangle"></i> Calibration Required
+                </h5>
+                <p class="display-4">{{ calibration }}</p>
             </div>
         </div>
     </div>
@@ -47,14 +57,42 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Бързи действия</h5>
+                <h5 class="mb-0">Quick Actions</h5>
             </div>
             <div class="list-group list-group-flush">
                 <a href="{% url 'equipment_create' %}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-plus-circle"></i> Добави ново оборудване
+                    <i class="bi bi-plus-circle"></i> Add New Equipment
                 </a>
                 <a href="{% url 'equipment_list' %}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-list"></i> Виж всички оборудвания
+                    <i class="bi bi-list"></i> View All Equipment
+                </a>
+                <a href="{% url 'maintenance_create' %}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-wrench"></i> Record Maintenance
+                </a>
+                <a href="{% url 'inspection_create' %}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-clipboard-check"></i> Record Inspection
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Setup</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="{% url 'manufacturer_list' %}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-building"></i> Manage Manufacturers
+                </a>
+                <a href="{% url 'category_list' %}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-tags"></i> Manage Categories
+                </a>
+                <a href="{% url 'maintenance_type_list' %}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-tools"></i> Manage Maintenance Types
+                </a>
+                <a href="{% url 'inspection_type_list' %}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-clipboard2-check"></i> Manage Inspection Types
                 </a>
             </div>
         </div>
