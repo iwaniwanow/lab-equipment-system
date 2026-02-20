@@ -1,12 +1,12 @@
-{% extends 'equipment/base.html' %}
+﻿{% extends 'equipment/base.html' %}
 
-{% block title %}Inspection Types{% endblock %}
+{% block title %}Типове проверки{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1><i class="bi bi-clipboard2-check"></i> Inspection Types</h1>
+    <h1><i class="bi bi-clipboard2-check"></i> Типове проверки</h1>
     <a href="{% url 'inspection_type_create' %}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Add Inspection Type
+        <i class="bi bi-plus-circle"></i> Добави тип проверка
     </a>
 </div>
 
@@ -20,6 +20,7 @@
                             <i class="bi bi-clipboard-check"></i> {{ itype.name }}
                         </h5>
                         <p class="mb-1">
+                            <span class="badge bg-info">{{ itype.get_category_display }}</span>
                             <span class="badge bg-success">{{ itype.get_frequency_display }}</span>
                         </p>
                         {% if itype.description %}
@@ -28,10 +29,10 @@
                     </div>
                     <div class="card-footer bg-transparent">
                         <a href="{% url 'inspection_type_detail' itype.pk %}" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-eye"></i> View
+                            <i class="bi bi-eye"></i> Преглед
                         </a>
                         <a href="{% url 'inspection_type_update' itype.pk %}" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-pencil"></i> Edit
+                            <i class="bi bi-pencil"></i> Редактирай
                         </a>
                     </div>
                 </div>
@@ -40,8 +41,8 @@
     </div>
 {% else %}
     <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> No inspection types found.
-        <a href="{% url 'inspection_type_create' %}">Add the first inspection type</a>.
+        <i class="bi bi-info-circle"></i> Няма намерени типове проверки.
+        <a href="{% url 'inspection_type_create' %}">Добавете първия тип проверка</a>.
     </div>
 {% endif %}
 {% endblock %}

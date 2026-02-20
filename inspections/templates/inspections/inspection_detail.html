@@ -1,91 +1,89 @@
-{% extends 'equipment/base.html' %}
-
-{% block title %}Inspection Detail - Lab Equipment{% endblock %}
-
+﻿{% extends 'equipment/base.html' %}
+{% block title %}Проверка #{{ inspection.pk }} - {{ inspection.equipment.asset_number }}{% endblock %}
 {% block content %}
-<div class="row mb-4">
-    <div class="col">
-        <h1 class="display-5">Inspection Detail</h1>
-        <p class="text-muted">{{ inspection.inspection_type.name }}</p>
-    </div><div class="col-auto">
-        <a href="{% url 'inspection_update' inspection.pk %}" class="btn btn-warning">
-            <i class="bi bi-pencil"></i> Edit
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'inspection_list' %}">Проверки</a></li>
+        <li class="breadcrumb-item active">Проверка #{{ inspection.pk }}</li>
+    </ol>
+</nav>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-clipboard-check"></i> Проверка #{{ inspection.pk }}</h1>
+    <div>
+        <a href="{% url 'inspection_update' inspection.pk %}" class="btn btn-secondary">
+            <i class="bi bi-pencil"></i> Редактирай
         </a>
         <a href="{% url 'inspection_delete' inspection.pk %}" class="btn btn-danger">
-            <i class="bi bi-trash"></i> Delete
+            <i class="bi bi-trash"></i> Изтрий
         </a>
     </div>
 </div>
-
 <div class="row">
     <div class="col-md-6">
         <div class="card mb-4">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Equipment Information</h5>
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Информация за проверката</h5>
             </div>
             <div class="card-body">
-                <p><strong>ASSET Number:</strong> {{ inspection.equipment.asset_number }}</p>
-                <p><strong>Name:</strong> {{ inspection.equipment.name }}</p>
-                <p><strong>Category:</strong> {{ inspection.equipment.category.name }}</p>
-                <p><strong>Location:</strong> {{ inspection.equipment.location }}</p>
-                <a href="{% url 'equipment_detail' inspection.equipment.pk %}" class="btn btn-sm btn-info">
-                    <i class="bi bi-box-arrow-up-right"></i> View Equipment
-                </a>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Оборудване:</th>
+                        <td><a href="{% url 'equipment_detail' inspection.equipment.pk %}">{{ inspection.equipment.asset_number }} - {{ inspection.equipment.name }}</a></td>
+                    </tr>
+                    <tr>
+                        <th>Тип проверка:</th>
+                        <td>{{ inspection.inspection_type.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Дата на проверка:</th>
+                        <td>{{ inspection.inspection_date }}</td>
+                    </tr>
+                    <tr>
+                        <th>Следваща проверка:</th>
+                        <td>{{ inspection.next_inspection_date }}</td>
+                    </tr>
+                    <tr>
+                        <th>Инспектор:</th>
+                        <td>{{ inspection.inspector_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Статус:</th>
+                        <td>
+                            {% if inspection.status == 'passed' %}
+                                <span class="badge bg-success">Годен</span>
+                            {% elif inspection.status == 'failed' %}
+                                <span class="badge bg-danger">Негоден</span>
+                            {% else %}
+                                <span class="badge bg-warning">Изисква внимание</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
-
     <div class="col-md-6">
         <div class="card mb-4">
             <div class="card-header bg-info text-white">
-                <h5 class="mb-0">Inspection Information</h5>
+                <h5 class="mb-0"><i class="bi bi-journal-text"></i> Констатации</h5>
             </div>
             <div class="card-body">
-                <p><strong>Type:</strong> {{ inspection.inspection_type.name }}</p>
-                <p><strong>Frequency:</strong> {{ inspection.inspection_type.get_frequency_display }}</p>
-                <p><strong>Date:</strong> {{ inspection.inspection_date }}</p>
-                <p><strong>Next Date:</strong> {{ inspection.next_inspection_date }}</p>
-                <p><strong>Inspector:</strong> {{ inspection.inspector_name }}</p>
-                <p><strong>Status:</strong>
-                    {% if inspection.status == 'passed' %}
-                        <span class="badge bg-success">Passed</span>
-                    {% elif inspection.status == 'failed' %}
-                        <span class="badge bg-danger">Failed</span>
-                    {% else %}
-                        <span class="badge bg-warning">Needs Attention</span>
-                    {% endif %}
-                </p>
+                {% if inspection.findings %}
+                    {{ inspection.findings|linebreaks }}
+                {% else %}
+                    <p class="text-muted">Няма записани констатации.</p>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
-
-<div class="card mb-4">
-    <div class="card-header bg-success text-white">
-        <h5 class="mb-0">Findings</h5>
-    </div>
-    <div class="card-body">
-        <p style="white-space: pre-wrap;">{{ inspection.findings }}</p>
-    </div>
-</div>
-
-{% if inspection.corrective_actions %}
-<div class="card mb-4">
-    <div class="card-header bg-warning text-dark">
-        <h5 class="mb-0">Corrective Actions</h5>
-    </div>
-    <div class="card-body">
-        <p style="white-space: pre-wrap;">{{ inspection.corrective_actions }}</p>
-    </div>
-</div>
-{% endif %}
-
-<div class="card">
-    <div class="card-header bg-secondary text-white">
-        <h5 class="mb-0">Inspection Type Checklist</h5>
-    </div>
-    <div class="card-body">
-        <p style="white-space: pre-wrap;">{{ inspection.inspection_type.checklist }}</p>
-    </div>
+<div class="mt-3">
+    <a href="{% url 'inspection_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Назад към списъка
+    </a>
+    <a href="{% url 'equipment_detail' inspection.equipment.pk %}" class="btn btn-outline-primary">
+        <i class="bi bi-gear"></i> Към оборудването
+    </a>
 </div>
 {% endblock %}

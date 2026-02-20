@@ -39,54 +39,72 @@ class EquipmentForm(forms.ModelForm):
         model = Equipment
         fields = [
             'asset_number', 'name', 'category', 'manufacturer',
-            'model', 'serial_number', 'location', 'required_maintenance_types',
-            'purchase_date', 'notes'
+            'model', 'serial_number', 'location', 'commissioning_date',
+            'requires_oq_pv', 'requires_calibration', 'requires_technical_review',
+            'check_interval_months', 'notes'
         ]
         widgets = {
             'asset_number': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'e.g., EQ-001'
+                'placeholder': 'например: EQ-001'
             }),
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Equipment name'
+                'placeholder': 'Име на оборудването'
             }),
             'category': forms.Select(attrs={'class': 'form-select'}),
             'manufacturer': forms.Select(attrs={'class': 'form-select'}),
             'model': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Model'
+                'placeholder': 'Модел'
             }),
             'serial_number': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Serial number'
+                'placeholder': 'Сериен номер'
             }),
             'location': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Laboratory location'
+                'placeholder': 'Локация в лабораторията'
             }),
-            'required_maintenance_types': forms.CheckboxSelectMultiple(),
-            'purchase_date': forms.DateInput(attrs={
+            'commissioning_date': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
             }),
+            'requires_oq_pv': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+            'requires_calibration': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+            'requires_technical_review': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+            'check_interval_months': forms.Select(attrs={'class': 'form-select'}),
             'notes': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': 'Additional notes'
+                'placeholder': 'Допълнителни бележки'
             }),
         }
         labels = {
-            'asset_number': 'ASSET Number',
-            'name': 'Equipment Name',
-            'category': 'Category',
-            'manufacturer': 'Manufacturer',
-            'model': 'Model',
-            'serial_number': 'Serial Number',
-            'location': 'Location',
-            'required_maintenance_types': 'Required Maintenance Types',
-            'purchase_date': 'Purchase Date',
-            'notes': 'Notes'
+            'asset_number': 'ASSET номер',
+            'name': 'Наименование',
+            'category': 'Категория',
+            'manufacturer': 'Производител',
+            'model': 'Модел',
+            'serial_number': 'Сериен номер',
+            'location': 'Локация',
+            'commissioning_date': 'Дата на въвеждане в експлоатация',
+            'requires_oq_pv': 'Изисква OQ/PV',
+            'requires_calibration': 'Изисква калибровка',
+            'requires_technical_review': 'Изисква технически преглед',
+            'check_interval_months': 'Периодичност на проверки',
+            'notes': 'Бележки'
+        }
+        help_texts = {
+            'requires_oq_pv': 'Подлежи на OQ/PV валидиране',
+            'requires_calibration': 'Подлежи на калибровка (везни, pH метри)',
+            'requires_technical_review': 'Подлежи на технически преглед',
         }
 
     def clean_asset_number(self):

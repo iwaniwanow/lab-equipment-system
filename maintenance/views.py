@@ -44,12 +44,20 @@ def maintenance_create(request):
         form = MaintenanceRecordForm(request.POST)
         if form.is_valid():
             maintenance = form.save()
-            messages.success(request, 'Maintenance record created successfully!')
+            messages.success(request, f'Записът за поддръжка е създаден успешно! ({maintenance.equipment.asset_number})')
             return redirect('maintenance_detail', pk=maintenance.pk)
+        else:
+            # Показване на грешките в конзолата за debugging
+            print("=" * 60)
+            print("ГРЕШКИ ВЪВ ФОРМАТА:")
+            for field, errors in form.errors.items():
+                print(f"  {field}: {errors}")
+            print("=" * 60)
+            messages.error(request, 'Има грешки във формата! Моля, проверете полетата.')
     else:
         form = MaintenanceRecordForm()
 
-    return render(request, 'maintenance/maintenance_form.html', {'form': form, 'action': 'Create'})
+    return render(request, 'maintenance/maintenance_form.html', {'form': form, 'action': 'Създай'})
 
 
 # Maintenance Update

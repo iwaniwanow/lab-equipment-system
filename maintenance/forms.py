@@ -9,25 +9,25 @@ class MaintenanceTypeForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'e.g., Annual Calibration, OQ/PV'
+                'placeholder': 'например: Годишна калибровка, OQ/PV'
             }),
             'type': forms.Select(attrs={'class': 'form-select'}),
             'period_months': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': '12 (for annual), 6 (for semi-annual)',
+                'placeholder': '12 (за годишна), 6 (за шестмесечна)',
                 'min': 1
             }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': 'Description of the maintenance type'
+                'placeholder': 'Описание на типа поддръжка'
             }),
         }
         labels = {
-            'name': 'Maintenance Type Name',
-            'type': 'Type',
-            'period_months': 'Period (Months)',
-            'description': 'Description'
+            'name': 'Наименование',
+            'type': 'Тип',
+            'period_months': 'Период (месеци)',
+            'description': 'Описание'
         }
 
 
@@ -37,7 +37,7 @@ class MaintenanceRecordForm(forms.ModelForm):
         fields = [
             'equipment', 'maintenance_type', 'performed_date',
             'next_due_date', 'performed_by', 'certificate_number',
-            'results', 'cost', 'notes'
+            'result', 'work_performed', 'parts_used', 'cost', 'currency', 'notes'
         ]
         widgets = {
             'equipment': forms.Select(attrs={'class': 'form-select'}),
@@ -53,45 +53,57 @@ class MaintenanceRecordForm(forms.ModelForm):
             }),
             'performed_by': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Department (Metrology/QC) or name'
+                'placeholder': 'Отдел (Метрология/QC) или име'
             }),
             'certificate_number': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Certificate/Protocol number'
+                'placeholder': 'Номер на сертификат/протокол'
             }),
-            'results': forms.Textarea(attrs={
+            'result': forms.Select(attrs={'class': 'form-select'}),
+            'work_performed': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
-                'placeholder': 'Calibration/Validation results'
+                'placeholder': 'Извършени дейности и резултати'
+            }),
+            'parts_used': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Използвани части/материали (ако има)'
             }),
             'cost': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Cost (optional)',
+                'placeholder': 'Цена (незадължително)',
                 'step': '0.01'
             }),
+            'currency': forms.Select(attrs={'class': 'form-select'}),
             'notes': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': 'Additional notes'
+                'placeholder': 'Допълнителни бележки'
             }),
         }
         labels = {
-            'equipment': 'Equipment',
-            'maintenance_type': 'Maintenance Type',
-            'performed_date': 'Performed Date',
-            'next_due_date': 'Next Due Date',
-            'performed_by': 'Performed By',
-            'certificate_number': 'Certificate Number',
-            'results': 'Results',
-            'cost': 'Cost',
-            'notes': 'Notes'
+            'equipment': 'Оборудване',
+            'maintenance_type': 'Тип поддръжка',
+            'performed_date': 'Дата на изпълнение',
+            'next_due_date': 'Следваща дата',
+            'performed_by': 'Изпълнено от',
+            'certificate_number': 'Номер на сертификат',
+            'result': 'Резултат',
+            'work_performed': 'Извършена работа',
+            'parts_used': 'Използвани части',
+            'cost': 'Цена',
+            'currency': 'Валута',
+            'notes': 'Бележки'
         }
         help_texts = {
-            'performed_date': 'Enter the date when maintenance was performed',
-            'next_due_date': 'Auto-calculated based on maintenance type period (read-only)'
+            'performed_date': 'Въведете датата на изпълнение',
+            'next_due_date': 'Автоматично изчислена въз основа на периода (само за четене)',
+            'parts_used': 'Незадължително - списък с части или материали'
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Make next_due_date field not required - it will be auto-calculated
         self.fields['next_due_date'].required = False
+        self.fields['parts_used'].required = False

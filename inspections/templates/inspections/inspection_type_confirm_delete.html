@@ -1,14 +1,14 @@
-{% extends 'equipment/base.html' %}
+﻿{% extends 'equipment/base.html' %}
 
-{% block title %}Delete Inspection Type - {{ inspection_type.name }}{% endblock %}
+{% block title %}Изтриване на тип проверка - {{ inspection_type.name }}{% endblock %}
 
 {% block content %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'inspection_type_list' %}">Inspection Types</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'inspection_type_list' %}">Типове проверки</a></li>
         <li class="breadcrumb-item"><a href="{% url 'inspection_type_detail' inspection_type.pk %}">{{ inspection_type.name }}</a></li>
-        <li class="breadcrumb-item active">Delete</li>
+        <li class="breadcrumb-item active">Изтриване</li>
     </ol>
 </nav>
 
@@ -16,21 +16,22 @@
     <div class="col-md-6">
         <div class="card border-danger">
             <div class="card-header bg-danger text-white">
-                <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Confirm Deletion</h4>
+                <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Потвърждение за изтриване</h4>
             </div>
             <div class="card-body">
-                <p class="lead">Are you sure you want to delete this inspection type?</p>
+                <p class="lead">Сигурни ли сте, че искате да изтриете този тип проверка?</p>
 
                 <div class="alert alert-warning">
                     <strong><i class="bi bi-clipboard-check"></i> {{ inspection_type.name }}</strong>
-                    <br><span class="badge bg-success">{{ inspection_type.get_frequency_display }}</span>
+                    <br><span class="badge bg-info">{{ inspection_type.get_category_display }}</span>
+                    <span class="badge bg-success">{{ inspection_type.get_frequency_display }}</span>
                 </div>
 
                 {% if inspection_type.inspections.count > 0 %}
                     <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-circle"></i> <strong>Warning!</strong>
-                        This inspection type has <strong>{{ inspection_type.inspections.count }} inspection(s)</strong> associated with it.
-                        Deleting this type may fail if inspections are still linked.
+                        <i class="bi bi-exclamation-circle"></i> <strong>Внимание!</strong>
+                        Този тип проверка има <strong>{{ inspection_type.inspections.count }} проверки</strong> свързани с него.
+                        Изтриването може да се провали ако има свързани проверки.
                     </div>
                 {% endif %}
 
@@ -38,10 +39,10 @@
                     {% csrf_token %}
                     <div class="d-flex justify-content-between mt-4">
                         <a href="{% url 'inspection_type_detail' inspection_type.pk %}" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left"></i> Cancel
+                            <i class="bi bi-arrow-left"></i> Откажи
                         </a>
                         <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> Yes, Delete
+                            <i class="bi bi-trash"></i> Да, изтрий
                         </button>
                     </div>
                 </form>
@@ -50,4 +51,3 @@
     </div>
 </div>
 {% endblock %}
-

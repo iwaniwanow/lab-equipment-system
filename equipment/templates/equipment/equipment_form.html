@@ -1,11 +1,11 @@
-{% extends 'equipment/base.html' %}
+﻿{% extends 'equipment/base.html' %}
 
-{% block title %}{{ action }} Equipment - Lab Equipment{% endblock %}
+{% block title %}{{ action }} Оборудване - Лабораторно Оборудване{% endblock %}
 
 {% block content %}
 <div class="row mb-4">
     <div class="col">
-        <h1 class="display-5">{{ action }} Equipment</h1>
+        <h1 class="display-5">{{ action }} Оборудване</h1>
     </div>
 </div>
 
@@ -18,12 +18,12 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     {{ form.asset_number.errors }}
-                    <label for="{{ form.asset_number.id_for_label }}" class="form-label">ASSET Number</label>
+                    <label for="{{ form.asset_number.id_for_label }}" class="form-label">ASSET Номер</label>
                     {{ form.asset_number }}
                 </div>
                 <div class="col-md-6 mb-3">
                     {{ form.name.errors }}
-                    <label for="{{ form.name.id_for_label }}" class="form-label">Name</label>
+                    <label for="{{ form.name.id_for_label }}" class="form-label">Наименование</label>
                     {{ form.name }}
                 </div>
             </div>
@@ -31,12 +31,12 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     {{ form.category.errors }}
-                    <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                    <label for="{{ form.category.id_for_label }}" class="form-label">Категория</label>
                     {{ form.category }}
                 </div>
                 <div class="col-md-6 mb-3">
                     {{ form.manufacturer.errors }}
-                    <label for="{{ form.manufacturer.id_for_label }}" class="form-label">Manufacturer</label>
+                    <label for="{{ form.manufacturer.id_for_label }}" class="form-label">Производител</label>
                     {{ form.manufacturer }}
                 </div>
             </div>
@@ -44,46 +44,103 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     {{ form.model.errors }}
-                    <label for="{{ form.model.id_for_label }}" class="form-label">Model</label>
+                    <label for="{{ form.model.id_for_label }}" class="form-label">Модел</label>
                     {{ form.model }}
                 </div>
                 <div class="col-md-6 mb-3">
                     {{ form.serial_number.errors }}
-                    <label for="{{ form.serial_number.id_for_label }}" class="form-label">Serial Number</label>
+                    <label for="{{ form.serial_number.id_for_label }}" class="form-label">Сериен номер</label>
                     {{ form.serial_number }}
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-4 mb-3">
+                <div class="col-md-6 mb-3">
                     {{ form.location.errors }}
-                    <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+                    <label for="{{ form.location.id_for_label }}" class="form-label">Локация</label>
                     {{ form.location }}
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-6 mb-3">
+                    {{ form.commissioning_date.errors }}
+                    <label for="{{ form.commissioning_date.id_for_label }}" class="form-label">Дата на въвеждане в експлоатация</label>
+                    {{ form.commissioning_date }}
+                    {% if form.commissioning_date.help_text %}
+                        <small class="form-text text-muted">{{ form.commissioning_date.help_text }}</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
                     {{ form.status.errors }}
-                    <label for="{{ form.status.id_for_label }}" class="form-label">Status</label>
+                    <label for="{{ form.status.id_for_label }}" class="form-label">Статус</label>
                     {{ form.status }}
                 </div>
-                <div class="col-md-4 mb-3">
-                    {{ form.purchase_date.errors }}
-                    <label for="{{ form.purchase_date.id_for_label }}" class="form-label">Purchase Date</label>
-                    {{ form.purchase_date }}
+                <div class="col-md-6 mb-3">
+                    {{ form.check_interval_months.errors }}
+                    <label for="{{ form.check_interval_months.id_for_label }}" class="form-label">Периодичност на проверките</label>
+                    {{ form.check_interval_months }}
+                    {% if form.check_interval_months.help_text %}
+                        <small class="form-text text-muted">{{ form.check_interval_months.help_text }}</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Изисквания за проверки</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check">
+                                {{ form.requires_oq_pv }}
+                                <label class="form-check-label" for="{{ form.requires_oq_pv.id_for_label }}">
+                                    Подлежи на OQ/PV валидиране
+                                </label>
+                            </div>
+                            {% if form.requires_oq_pv.help_text %}
+                                <small class="form-text text-muted">{{ form.requires_oq_pv.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check">
+                                {{ form.requires_calibration }}
+                                <label class="form-check-label" for="{{ form.requires_calibration.id_for_label }}">
+                                    Подлежи на калибровка
+                                </label>
+                            </div>
+                            {% if form.requires_calibration.help_text %}
+                                <small class="form-text text-muted">{{ form.requires_calibration.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check">
+                                {{ form.requires_technical_review }}
+                                <label class="form-check-label" for="{{ form.requires_technical_review.id_for_label }}">
+                                    Подлежи на технически преглед
+                                </label>
+                            </div>
+                            {% if form.requires_technical_review.help_text %}
+                                <small class="form-text text-muted">{{ form.requires_technical_review.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="mb-3">
                 {{ form.notes.errors }}
-                <label for="{{ form.notes.id_for_label }}" class="form-label">Notes</label>
+                <label for="{{ form.notes.id_for_label }}" class="form-label">Бележки</label>
                 {{ form.notes }}
             </div>
 
             <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">
+                <button type="Изпрати" class="btn btn-primary">
                     <i class="bi bi-check-circle"></i> {{ action }}
                 </button>
                 <a href="{% url 'equipment_list' %}" class="btn btn-secondary">
-                    <i class="bi bi-x-circle"></i> Cancel
+                    <i class="bi bi-x-circle"></i> Откажи
                 </a>
             </div>
         </form>

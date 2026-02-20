@@ -1,78 +1,23 @@
-{% extends 'equipment/base.html' %}
-
-{% block title %}{{ action }} Inspection - Lab Equipment{% endblock %}
-
+﻿{% extends 'equipment/base.html' %}
+{% block title %}{{ action }} Проверка{% endblock %}
 {% block content %}
 <div class="row mb-4">
     <div class="col">
-        <h1 class="display-5">{{ action }} Inspection</h1>
+        <h1>{{ action }} Проверка</h1>
     </div>
 </div>
-
 <div class="card">
     <div class="card-body">
         <form method="post">
             {% csrf_token %}
-            {{ form.non_field_errors }}
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    {{ form.equipment.errors }}
-                    <label for="{{ form.equipment.id_for_label }}" class="form-label">Equipment *</label>
-                    {{ form.equipment }}
-                </div>
-                <div class="col-md-6 mb-3">
-                    {{ form.inspection_type.errors }}
-                    <label for="{{ form.inspection_type.id_for_label }}" class="form-label">Inspection Type *</label>
-                    {{ form.inspection_type }}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    {{ form.inspection_date.errors }}
-                    <label for="{{ form.inspection_date.id_for_label }}" class="form-label">Inspection Date *</label>
-                    {{ form.inspection_date }}
-                </div>
-                <div class="col-md-4 mb-3">
-                    {{ form.next_inspection_date.errors }}
-                    <label for="{{ form.next_inspection_date.id_for_label }}" class="form-label">Next Inspection Date *</label>
-                    {{ form.next_inspection_date }}
-                    <small class="form-text text-muted">Calculated automatically</small>
-                </div>
-                <div class="col-md-4 mb-3">
-                    {{ form.status.errors }}
-                    <label for="{{ form.status.id_for_label }}" class="form-label">Status *</label>
-                    {{ form.status }}
-                </div>
-            </div>
-
-            <div class="mb-3">
-                {{ form.inspector_name.errors }}
-                <label for="{{ form.inspector_name.id_for_label }}" class="form-label">Inspector Name *</label>
-                {{ form.inspector_name }}
-            </div>
-
-            <div class="mb-3">
-                {{ form.findings.errors }}
-                <label for="{{ form.findings.id_for_label }}" class="form-label">Findings *</label>
-                {{ form.findings }}<small class="form-text text-muted">Describe the results of the inspection</small>
-            </div>
-
-            <div class="mb-3">
-                {{ form.corrective_actions.errors }}
-                <label for="{{ form.corrective_actions.id_for_label }}" class="form-label">Corrective Actions</label>
-                {{ form.corrective_actions }}
-                <small class="form-text text-muted">If any issues were found, describe corrective actions</small>
-            </div>
-
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-circle"></i> {{ action }}
-                </button>
+            {{ form.as_p }}
+            <div class="d-flex justify-content-between mt-4">
                 <a href="{% url 'inspection_list' %}" class="btn btn-secondary">
-                    <i class="bi bi-x-circle"></i> Cancel
+                    <i class="bi bi-arrow-left"></i> Откажи
                 </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Запиши
+                </button>
             </div>
         </form>
     </div>

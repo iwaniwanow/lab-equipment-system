@@ -11,26 +11,52 @@ def custom_404(request, exception):
 
 # Dashboard
 def dashboard(request):
+    # Автоматично актуализиране на статусите на всички оборудвания
+    for equipment in Equipment.objects.all():
+        equipment.update_status()
+
     total_equipment = Equipment.objects.count()
-    operational = Equipment.objects.filter(status='operational').count()
+    active = Equipment.objects.filter(status='active').count()
+    pending_validation = Equipment.objects.filter(status='pending_validation').count()
+    pending_calibration = Equipment.objects.filter(status='pending_calibration').count()
+    pending_technical_review = Equipment.objects.filter(status='pending_technical_review').count()
+    pending_multiple = Equipment.objects.filter(status='pending_multiple').count()
     maintenance = Equipment.objects.filter(status='maintenance').count()
-    calibration = Equipment.objects.filter(status='calibration').count()
     out_of_service = Equipment.objects.filter(status='out_of_service').count()
+
+    # Списъци с оборудване за всеки статус (за бутоните)
+    active_equipment = Equipment.objects.filter(status='active')
+    pending_validation_equipment = Equipment.objects.filter(status='pending_validation')
+    pending_calibration_equipment = Equipment.objects.filter(status='pending_calibration')
+    pending_technical_review_equipment = Equipment.objects.filter(status='pending_technical_review')
+    pending_multiple_equipment = Equipment.objects.filter(status='pending_multiple')
+    maintenance_equipment = Equipment.objects.filter(status='maintenance')
+    out_of_service_equipment = Equipment.objects.filter(status='out_of_service')
 
     context = {
         'total_equipment': total_equipment,
-        'operational': operational,
+        'active': active,
+        'pending_validation': pending_validation,
+        'pending_calibration': pending_calibration,
+        'pending_technical_review': pending_technical_review,
+        'pending_multiple': pending_multiple,
         'maintenance': maintenance,
-        'calibration': calibration,
         'out_of_service': out_of_service,
+        # Списъци за бутоните
+        'active_equipment': active_equipment,
+        'pending_validation_equipment': pending_validation_equipment,
+        'pending_calibration_equipment': pending_calibration_equipment,
+        'pending_technical_review_equipment': pending_technical_review_equipment,
+        'pending_multiple_equipment': pending_multiple_equipment,
+        'maintenance_equipment': maintenance_equipment,
+        'out_of_service_equipment': out_of_service_equipment,
     }
     return render(request, 'equipment/dashboard.html', context)
 
 
 # Equipment List (READ)
 def equipment_list(request):
-    equipment = Equipment.objects.select_related('category', 'manufacturer')\
-        .prefetch_related('required_maintenance_types').all()
+    equipment = Equipment.objects.select_related('category', 'manufacturer').all()
     categories = EquipmentCategory.objects.all()
 
     # Filter by category

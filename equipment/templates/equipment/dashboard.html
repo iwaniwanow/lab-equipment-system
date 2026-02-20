@@ -1,101 +1,340 @@
-{% extends 'equipment/base.html' %}
+﻿{% extends 'equipment/base.html' %}
 
-{% block title %}Dashboard - Lab Equipment{% endblock %}
+{% block title %}Табло - Лабораторно Оборудване{% endblock %}
 
 {% block content %}
+<!-- Заглавие и бързи действия -->
 <div class="row mb-4">
-    <div class="col">
-        <h1 class="display-4">Dashboard</h1>
-        <p class="lead">Laboratory Equipment Management System Overview</p>
+    <div class="col-12">
+        <h1 class="display-5 fw-bold mb-1">Табло за управление</h1>
+        <p class="text-muted">Система за управление на лабораторно оборудване</p>
     </div>
 </div>
 
-<div class="row g-4 mb-4">
-    <div class="col-md-3">
-        <div class="card text-white bg-primary">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-tools"></i> Total Equipment
-                </h5>
+<!-- Бързи действия -->
+<div class="quick-actions mb-4">
+    <h5 class="mb-3"><i class="bi bi-lightning-fill"></i> Бързи действия</h5>
+    <a href="{% url 'equipment_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Добави оборудване
+    </a>
+    <a href="{% url 'maintenance_create' %}" class="btn btn-success">
+        <i class="bi bi-wrench"></i> Запиши поддръжка
+    </a>
+    <a href="{% url 'inspection_create' %}" class="btn btn-info">
+        <i class="bi bi-clipboard-check"></i> Запиши проверка
+    </a>
+    <a href="{% url 'equipment_list' %}" class="btn btn-outline-primary">
+        <i class="bi bi-list"></i> Виж всички
+    </a>
+</div>
+
+<!-- Основни статистики -->
+<div class="row g-3 mb-4">
+    <!-- Общо оборудване -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card Табло-card text-white bg-primary">
+            <div class="card-body text-center">
+                <h6 class="card-title"><i class="bi bi-tools"></i> Общо оборудване</h6>
                 <p class="display-4">{{ total_equipment }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-check-circle"></i> Operational
-                </h5>
-                <p class="display-4">{{ operational }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-warning">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-wrench"></i> Under Maintenance
-                </h5>
-                <p class="display-4">{{ maintenance }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-danger">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="bi bi-exclamation-triangle"></i> Calibration Required
-                </h5>
-                <p class="display-4">{{ calibration }}</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-5">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Quick Actions</h5>
-            </div>
-            <div class="list-group list-group-flush">
-                <a href="{% url 'equipment_create' %}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-plus-circle"></i> Add New Equipment
-                </a>
-                <a href="{% url 'equipment_list' %}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-list"></i> View All Equipment
-                </a>
-                <a href="{% url 'maintenance_create' %}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-wrench"></i> Record Maintenance
-                </a>
-                <a href="{% url 'inspection_create' %}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-clipboard-check"></i> Record Inspection
+                <a href="{% url 'equipment_list' %}" class="btn btn-light btn-sm">
+                    <i class="bi bi-arrow-right"></i> Виж всички
                 </a>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">Setup</h5>
+    <!-- В експлоатация -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card Табло-card text-white bg-success">
+            <div class="card-body text-center">
+                <h6 class="card-title"><i class="bi bi-check-circle-fill"></i> В експлоатация</h6>
+                <p class="display-4">{{ active }}</p>
+                <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#activeList">
+                    <i class="bi bi-list"></i> Списък ({{ active }})
+                </button>
             </div>
-            <div class="list-group list-group-flush">
-                <a href="{% url 'manufacturer_list' %}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-building"></i> Manage Manufacturers
-                </a>
-                <a href="{% url 'category_list' %}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-tags"></i> Manage Categories
-                </a>
-                <a href="{% url 'maintenance_type_list' %}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-tools"></i> Manage Maintenance Types
-                </a>
-                <a href="{% url 'inspection_type_list' %}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-clipboard2-check"></i> Manage Inspection Types
-                </a>
+        </div>
+    </div>
+
+    <!-- Чака множество проверки -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card Табло-card text-white bg-warning">
+            <div class="card-body text-center">
+                <h6 class="card-title"><i class="bi bi-exclamation-triangle-fill"></i> Изискват действие</h6>
+                <p class="display-4">{{ pending_multiple }}</p>
+                <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#multipleList">
+                    <i class="bi bi-list"></i> Виж кое липсва
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- На поддръжка / Извън експлоатация -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card Табло-card text-white bg-secondary">
+            <div class="card-body text-center">
+                <h6 class="card-title"><i class="bi bi-pause-circle-fill"></i> Неактивни</h6>
+                <p class="display-4">{{ maintenance|add:out_of_service }}</p>
+                <small class="d-block">Поддръжка: {{ maintenance }} | Извън: {{ out_of_service }}</small>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
+
+<!-- Collapse списъци -->
+<div class="row g-3 mb-4">
+    <!-- Списък В експлоатация -->
+    <div class="col-12">
+        <div class="collapse" id="activeList">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0"><i class="bi bi-check-circle"></i> Оборудване в експлоатация</h6>
+                </div>
+                <div class="card-body">
+                    {% if active_equipment %}
+                        <div class="row">
+                            {% for eq in active_equipment %}
+                            <div class="col-md-6 col-lg-4 mb-2">
+                                <a href="{% url 'equipment_detail' eq.pk %}" class="text-decoration-none">
+                                    <div class="border rounded p-2 hover-shadow">
+                                        <strong>{{ eq.asset_number }}</strong> - {{ eq.name }}
+                                        <br><small class="text-muted">{{ eq.category.name }}</small>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">Няма оборудване в експлоатация</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Списък Изискват множество проверки -->
+    <div class="col-12">
+        <div class="collapse" id="multipleList">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h6 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Оборудване изискващо действие</h6>
+                </div>
+                <div class="card-body">
+                    {% if pending_multiple_equipment %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ASSET</th>
+                                        <th>Наименование</th>
+                                        <th>Липсва</th>
+                                        <th>Действие</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for eq in pending_multiple_equipment %}
+                                    <tr>
+                                        <td><strong>{{ eq.asset_number }}</strong></td>
+                                        <td>{{ eq.name }}</td>
+                                        <td><span class="text-danger">{{ eq.get_missing_requirements_display }}</span></td>
+                                        <td>
+                                            <a href="{% url 'equipment_detail' eq.pk %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-arrow-right"></i> Виж
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">Няма оборудване изискващо множество проверки</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Детайлни статистики -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="bi bi-bar-chart-fill"></i> Детайлна статистика по изисквания</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="p-3 border rounded">
+                            <i class="bi bi-hourglass-split fs-2 text-info"></i>
+                            <h3 class="mt-2">{{ pending_validation }}</h3>
+                            <small class="text-muted">Чака валидиране</small>
+                            {% if pending_validation > 0 %}
+                            <button class="btn btn-sm btn-outline-info mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#validationList">
+                                Списък
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="p-3 border rounded">
+                            <i class="bi bi-calculator fs-2 text-danger"></i>
+                            <h3 class="mt-2">{{ pending_calibration }}</h3>
+                            <small class="text-muted">Чака калибровка</small>
+                            {% if pending_calibration > 0 %}
+                            <button class="btn btn-sm btn-outline-danger mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#calibrationList">
+                                Списък
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="p-3 border rounded">
+                            <i class="bi bi-clipboard-check fs-2 text-warning"></i>
+                            <h3 class="mt-2">{{ pending_technical_review }}</h3>
+                            <small class="text-muted">Чака технически преглед</small>
+                            {% if pending_technical_review > 0 %}
+                            <button class="btn btn-sm btn-outline-warning mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#technicalList">
+                                Списък
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-3">
+                        <div class="p-3 border rounded">
+                            <i class="bi bi-wrench fs-2 text-secondary"></i>
+                            <h3 class="mt-2">{{ maintenance }}</h3>
+                            <small class="text-muted">На поддръжка</small>
+                            {% if maintenance > 0 %}
+                            <button class="btn btn-sm btn-outline-secondary mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#maintenanceList">
+                                Списък
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Collapse детайли -->
+<div class="row">
+    <!-- Чака валидиране -->
+    <div class="col-12 mb-3">
+        <div class="collapse" id="validationList">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="bi bi-hourglass-split"></i> Чака валидиране</h6>
+                </div>
+                <div class="card-body">
+                    {% if pending_validation_equipment %}
+                        <div class="row">
+                            {% for eq in pending_validation_equipment %}
+                            <div class="col-md-6 col-lg-4 mb-2">
+                                <a href="{% url 'equipment_detail' eq.pk %}" class="text-decoration-none">
+                                    <div class="border rounded p-2">
+                                        <i class="bi bi-hourglass-split text-info"></i>
+                                        <strong>{{ eq.asset_number }}</strong> - {{ eq.name }}
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">Няма оборудване чакащо валидиране</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Чака калибровка -->
+    <div class="col-12 mb-3">
+        <div class="collapse" id="calibrationList">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0"><i class="bi bi-calculator"></i> Чака калибровка</h6>
+                </div>
+                <div class="card-body">
+                    {% if pending_calibration_equipment %}
+                        <div class="row">
+                            {% for eq in pending_calibration_equipment %}
+                            <div class="col-md-6 col-lg-4 mb-2">
+                                <a href="{% url 'equipment_detail' eq.pk %}" class="text-decoration-none">
+                                    <div class="border rounded p-2">
+                                        <i class="bi bi-calculator text-danger"></i>
+                                        <strong>{{ eq.asset_number }}</strong> - {{ eq.name }}
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">Няма оборудване чакащо калибровка</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Чака технически преглед -->
+    <div class="col-12 mb-3">
+        <div class="collapse" id="technicalList">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h6 class="mb-0"><i class="bi bi-clipboard-check"></i> Чака технически преглед</h6>
+                </div>
+                <div class="card-body">
+                    {% if pending_technical_review_equipment %}
+                        <div class="row">
+                            {% for eq in pending_technical_review_equipment %}
+                            <div class="col-md-6 col-lg-4 mb-2">
+                                <a href="{% url 'equipment_detail' eq.pk %}" class="text-decoration-none">
+                                    <div class="border rounded p-2">
+                                        <i class="bi bi-clipboard-check text-warning"></i>
+                                        <strong>{{ eq.asset_number }}</strong> - {{ eq.name }}
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">Няма оборудване чакащо технически преглед</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- На поддръжка -->
+    <div class="col-12 mb-3">
+        <div class="collapse" id="maintenanceList">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0"><i class="bi bi-wrench"></i> На поддръжка</h6>
+                </div>
+                <div class="card-body">
+                    {% if maintenance_equipment %}
+                        <div class="row">
+                            {% for eq in maintenance_equipment %}
+                            <div class="col-md-6 col-lg-4 mb-2">
+                                <a href="{% url 'equipment_detail' eq.pk %}" class="text-decoration-none">
+                                    <div class="border rounded p-2">
+                                        <i class="bi bi-wrench text-secondary"></i>
+                                        <strong>{{ eq.asset_number }}</strong> - {{ eq.name }}
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">Няма оборудване на поддръжка</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

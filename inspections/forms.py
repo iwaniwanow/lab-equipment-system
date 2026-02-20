@@ -8,29 +8,31 @@ from equipment.models import Equipment
 class InspectionTypeForm(forms.ModelForm):
     class Meta:
         model = InspectionType
-        fields = ['name', 'frequency', 'description', 'checklist']
+        fields = ['name', 'category', 'frequency', 'description', 'checklist']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'e.g., Daily Inspection, Monthly Check'
+                'placeholder': 'например: Дневна проверка, Месечен контрол'
             }),
+            'category': forms.Select(attrs={'class': 'form-select'}),
             'frequency': forms.Select(attrs={'class': 'form-select'}),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': 'Description of the inspection type'
+                'placeholder': 'Описание на типа проверка'
             }),
             'checklist': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 5,
-                'placeholder': 'Checklist items (one per line)'
+                'placeholder': 'Списък с проверки (по една на ред)'
             }),
         }
         labels = {
-            'name': 'Inspection Type Name',
-            'frequency': 'Frequency',
-            'description': 'Description',
-            'checklist': 'Checklist'
+            'name': 'Наименование',
+            'category': 'Категория',
+            'frequency': 'Честота',
+            'description': 'Описание',
+            'checklist': 'Контролен списък'
         }
 
 
@@ -52,29 +54,29 @@ class InspectionForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'form-select'}),
             'inspector_name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Inspector name'
+                'placeholder': 'Име на проверяващия'
             }),
             'findings': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
-                'placeholder': 'Inspection results and remarks'
+                'placeholder': 'Констатации и резултати от проверката'
             }),
             'corrective_actions': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': 'Corrective actions (if needed)'
+                'placeholder': 'Коригиращи действия (ако са необходими)'
             }),
         }
         labels = {
-            'equipment': 'Equipment',
-            'inspection_type': 'Inspection Type',
-            'inspection_date': 'Inspection Date',
-            'status': 'Status',
-            'inspector_name': 'Inspector Name',
-            'findings': 'Findings',
-            'corrective_actions': 'Corrective Actions'
+            'equipment': 'Оборудване',
+            'inspection_type': 'Тип проверка',
+            'inspection_date': 'Дата на проверка',
+            'status': 'Статус',
+            'inspector_name': 'Проверяващ',
+            'findings': 'Констатации',
+            'corrective_actions': 'Коригиращи действия'
         }
         help_texts = {
-            'inspection_date': 'Next inspection date will be calculated automatically'
+            'inspection_date': 'Следващата дата на проверка ще бъде изчислена автоматично'
         }
 

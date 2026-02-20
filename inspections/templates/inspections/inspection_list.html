@@ -1,49 +1,49 @@
 {% extends 'equipment/base.html' %}
 
-{% block title %}Inspection List - Lab Equipment{% endblock %}
+{% block title %}Списък проверки - Лабораторно Оборудване{% endblock %}
 
 {% block content %}
 <div class="row mb-4">
     <div class="col">
-        <h1 class="display-4">Inspection List</h1>
+        <h1 class="display-4">Списък проверки</h1>
     </div>
     <div class="col-auto">
         <a href="{% url 'inspection_create' %}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Add Inspection
+            <i class="bi bi-plus-circle"></i> Добави проверка
         </a>
     </div>
 </div>
 
 <div class="card mb-4">
     <div class="card-header">
-        <h5 class="mb-0">Filters</h5>
+        <h5 class="mb-0">Филтри</h5>
     </div>
     <div class="card-body">
         <form method="get" class="row g-3">
             <div class="col-md-5">
-                <label for="equipment" class="form-label">Equipment</label>
+                <label for="equipment" class="form-label">Оборудване</label>
                 <select name="equipment" id="equipment" class="form-select">
-                    <option value="">All Equipment</option>
+                    <option value="">Всички оборудвания</option>
                     {% for eq in equipment_list %}
                         <option value="{{ eq.id }}">{{ eq.asset_number }} - {{ eq.name }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="col-md-4">
-                <label for="status" class="form-label">Status</label>
+                <label for="status" class="form-label">Статус</label>
                 <select name="status" id="status" class="form-select">
-                    <option value="">All Statuses</option>
-                    <option value="passed">Passed</option>
-                    <option value="failed">Failed</option>
-                    <option value="needs_attention">Needs Attention</option>
+                    <option value="">Всички статуси</option>
+                    <option value="passed">Годен</option>
+                    <option value="failed">Негоден</option>
+                    <option value="needs_attention">Изисква внимание</option>
                 </select>
             </div>
             <div class="col-md-3 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary me-2">
-                    <i class="bi bi-funnel"></i> Filter
+                    <i class="bi bi-funnel"></i> Филтрирай
                 </button>
                 <a href="{% url 'inspection_list' %}" class="btn btn-secondary">
-                    <i class="bi bi-x-circle"></i> Clear
+                    <i class="bi bi-x-circle"></i> Изчисти
                 </a>
             </div>
         </form>
@@ -54,13 +54,13 @@
     <table class="table table-striped table-hover">
         <thead class="table-dark">
             <tr>
-                <th>Equipment</th>
-                <th>Inspection Type</th>
-                <th>Date</th>
-                <th>Next Date</th>
-                <th>Status</th>
-                <th>Inspector</th>
-                <th>Actions</th>
+                <th>Оборудване</th>
+                <th>Тип проверка</th>
+                <th>Дата</th>
+                <th>Следваща дата</th>
+                <th>Статус</th>
+                <th>Инспектор</th>
+                <th>Действия</th>
             </tr>
         </thead>
         <tbody>
@@ -75,31 +75,34 @@
                 <td>{{ inspection.next_inspection_date }}</td>
                 <td>
                     {% if inspection.status == 'passed' %}
-                        <span class="badge bg-success">Passed</span>
+                        <span class="badge bg-success">Годен</span>
                     {% elif inspection.status == 'failed' %}
-                        <span class="badge bg-danger">Failed</span>
+                        <span class="badge bg-danger">Негоден</span>
                     {% else %}
-                        <span class="badge bg-warning">Needs Attention</span>
+                        <span class="badge bg-warning">Изисква внимание</span>
                     {% endif %}
                 </td>
                 <td>{{ inspection.inspector_name }}</td>
                 <td>
                     <a href="{% url 'inspection_detail' inspection.pk %}" class="btn btn-sm btn-info">
-                        <i class="bi bi-eye"></i> View
+                        <i class="bi bi-eye"></i> Преглед
                     </a>
                     <a href="{% url 'inspection_update' inspection.pk %}" class="btn btn-sm btn-warning">
-                        <i class="bi bi-pencil"></i> Edit
-                    </a><a href="{% url 'inspection_delete' inspection.pk %}" class="btn btn-sm btn-danger">
-                        <i class="bi bi-trash"></i> Delete
+                        <i class="bi bi-pencil"></i> Редактирай
+                    </a>
+                    <a href="{% url 'inspection_delete' inspection.pk %}" class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Изтрий
                     </a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7" class="text-center text-muted">No inspections found.</td>
+                <td colspan="7" class="text-center text-muted">Няма намерени проверки.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 {% endblock %}
+
+

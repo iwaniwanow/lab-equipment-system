@@ -1,8 +1,16 @@
-{% extends 'equipment/base.html' %}
+﻿{% extends 'equipment/base.html' %}
 
-{% block title %}{{ equipment.name }} - Lab Equipment{% endblock %}
+{% block title %}{{ equipment.name }} - Лабораторно Оборудване{% endblock %}
 
 {% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'equipment_list' %}">Оборудване</a></li>
+        <li class="breadcrumb-item active">{{ equipment.asset_number }}</li>
+    </ol>
+</nav>
+
 <div class="row mb-4">
     <div class="col">
         <h1 class="display-5">{{ equipment.name }}</h1>
@@ -10,46 +18,128 @@
     </div>
     <div class="col-auto">
         <a href="{% url 'equipment_update' equipment.pk %}" class="btn btn-warning">
-            <i class="bi bi-pencil"></i> Edit
+            <i class="bi bi-pencil"></i> Редактирай
         </a>
         <a href="{% url 'equipment_delete' equipment.pk %}" class="btn btn-danger">
-            <i class="bi bi-trash"></i> Delete
+            <i class="bi bi-trash"></i> Изтрий
         </a>
     </div>
 </div>
 
+<!-- Предупреждения за статуса -->
+{% if equipment.status != 'active' %}
+<div class="alert
+    {% if equipment.status == 'pending_calibration' or equipment.status == 'out_of_service' %}alert-danger
+    {% elif equipment.status == 'pending_validation' %}alert-info
+    {% elif equipment.status == 'pending_technical_review' or equipment.status == 'maintenance' or equipment.status == 'pending_multiple' %}alert-warning
+    {% else %}alert-secondary{% endif %}" role="alert">
+    <h5 class="alert-heading">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        {% if equipment.status == 'pending_calibration' %}Изисква калибровка!
+        {% elif equipment.status == 'pending_validation' %}Изисква валидиране!
+        {% elif equipment.status == 'pending_technical_review' %}Изисква технически преглед!
+        {% elif equipment.status == 'pending_multiple' %}Изисква множество проверки!
+        {% elif equipment.status == 'maintenance' %}На поддръжка
+        {% elif equipment.status == 'out_of_service' %}Извън експлоатация!
+        {% endif %}
+    </h5>
+    <p class="mb-0">
+        {% if equipment.status == 'pending_calibration' %}
+            Това оборудване изисква калибровка. Моля, запишете нова калибровка.
+        {% elif equipment.status == 'pending_validation' %}
+            Това оборудване изисква OQ/PV валидиране. Моля, извършете валидиране.
+        {% elif equipment.status == 'pending_technical_review' %}
+            Това оборудване изисква технически преглед. Моля, извършете преглед.
+        {% elif equipment.status == 'pending_multiple' %}
+            <strong>{{ equipment.get_missing_requirements_display }}</strong>
+            <br>Моля, изпълнете всички изисквания за да въведете оборудването в експлоатация.
+        {% elif equipment.status == 'maintenance' %}
+            Това оборудване е на поддръжка.
+        {% elif equipment.status == 'out_of_service' %}
+            Това оборудване е извън експлоатация поради провалена проверка.
+        {% endif %}
+    </p>
+    <hr>
+    <div class="d-flex gap-2">
+        {% if equipment.status == 'pending_calibration' or equipment.status == 'pending_validation' or equipment.status == 'pending_multiple' %}
+            <a href="{% url 'maintenance_create' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-primary">
+                <i class="bi bi-wrench"></i> Запиши поддръжка (Калибровка/Валидиране)
+            </a>
+        {% endif %}
+        {% if equipment.status == 'pending_technical_review' or equipment.status == 'pending_multiple' %}
+            <a href="{% url 'inspection_create' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-primary">
+                <i class="bi bi-clipboard-check"></i> Запиши технически преглед
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
 <div class="card mb-4">
     <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">Equipment Details</h5>
+        <h5 class="mb-0"><i class="bi bi-info-circle"></i> Детайли за оборудването</h5>
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
-                <p><strong>Category:</strong> {{ equipment.category.name }}</p>
-                <p><strong>Manufacturer:</strong> {{ equipment.manufacturer }}</p>
-                <p><strong>Model:</strong> {{ equipment.model }}</p>
-                <p><strong>Serial Number:</strong> {{ equipment.serial_number }}</p>
+                <p><strong>Категория:</strong> {{ equipment.category.name }}</p>
+                <p><strong>Производител:</strong> {{ equipment.manufacturer }}</p>
+                <p><strong>Модел:</strong> {{ equipment.model }}</p>
+                <p><strong>Сериен номер:</strong> {{ equipment.serial_number }}</p>
+                <p><strong>Локация:</strong> {{ equipment.location }}</p>
             </div>
             <div class="col-md-6">
-                <p><strong>Location:</strong> {{ equipment.location }}</p>
-                <p><strong>Status:</strong>
-                    {% if equipment.status == 'operational' %}
-                        <span class="badge bg-success">Operational</span>
+                <p><strong>Статус:</strong>
+                    {% if equipment.status == 'active' %}
+                        <span class="badge bg-success">{{ equipment.get_status_display }}</span>
+                    {% elif equipment.status == 'pending_validation' %}
+                        <span class="badge bg-info">{{ equipment.get_status_display }}</span>
+                    {% elif equipment.status == 'pending_calibration' %}
+                        <span class="badge bg-danger">{{ equipment.get_status_display }}</span>
+                    {% elif equipment.status == 'pending_technical_review' %}
+                        <span class="badge bg-warning">{{ equipment.get_status_display }}</span>
+                    {% elif equipment.status == 'pending_multiple' %}
+                        <span class="badge bg-warning">{{ equipment.get_status_display }}</span>
                     {% elif equipment.status == 'maintenance' %}
-                        <span class="badge bg-warning">Maintenance</span>
-                    {% elif equipment.status == 'calibration' %}
-                        <span class="badge bg-info">Calibration</span>
+                        <span class="badge bg-warning">{{ equipment.get_status_display }}</span>
                     {% else %}
-                        <span class="badge bg-danger">Out of Service</span>
+                        <span class="badge bg-dark">{{ equipment.get_status_display }}</span>
                     {% endif %}
                 </p>
-                <p><strong>Purchase Date:</strong> {{ equipment.purchase_date|default:"N/A" }}</p>
+                {% if equipment.status == 'pending_multiple' %}
+                <p><strong>Липсващи изисквания:</strong> <span class="text-danger">{{ equipment.get_missing_requirements_display }}</span></p>
+                {% endif %}
+                <p><strong>Дата на покупка:</strong> {{ equipment.purchase_date|default:"Няма данни" }}</p>
+                <p><strong>Дата на въвеждане в експлоатация:</strong> {{ equipment.commissioning_date|default:"Не е въведено" }}</p>
+                <p><strong>Периодичност на проверки:</strong> {{ equipment.get_inspection_frequency_display }}</p>
             </div>
         </div>
+
+        <hr>
+        <div class="row">
+            <div class="col-md-12">
+                <h6><strong>Изисквания за експлоатация:</strong></h6>
+                <p>
+                    {% if equipment.requires_oq_pv %}
+                        <span class="badge bg-primary">OQ/PV Валидиране</span>
+                    {% endif %}
+                    {% if equipment.requires_calibration %}
+                        <span class="badge bg-info">Калибровка</span>
+                    {% endif %}
+                    {% if equipment.requires_technical_review %}
+                        <span class="badge bg-success">Технически преглед</span>
+                    {% endif %}
+                    {% if not equipment.requires_oq_pv and not equipment.requires_calibration and not equipment.requires_technical_review %}
+                        <span class="text-muted">Няма специални изисквания</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
         {% if equipment.notes %}
         <hr>
-        <p><strong>Notes:</strong></p>
-        <p>{{ equipment.notes }}</p>
+        <p><strong>Бележки:</strong></p>
+        <p>{{ equipment.notes|linebreaks }}</p>
         {% endif %}
     </div>
 </div>
@@ -57,45 +147,113 @@
 <div class="row">
     <div class="col-md-6">
         <div class="card mb-4">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">Recent Inspections</h5>
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-clipboard-check"></i> Последни проверки</h5>
+                <a href="{% url 'inspection_create' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-light">
+                    <i class="bi bi-plus"></i> Нова
+                </a>
             </div>
             <div class="card-body">
                 {% if inspections %}
                     <ul class="list-group">
                         {% for inspection in inspections %}
                         <li class="list-group-item">
-                            <strong>{{ inspection.inspection_type.name }}</strong><br>
-                            <small>{{ inspection.inspection_date }} - {{ inspection.status }}</small>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong>{{ inspection.inspection_type.name }}</strong><br>
+                                    <small class="text-muted">{{ inspection.inspection_date }}</small>
+                                </div>
+                                <div>
+                                    {% if inspection.status == 'passed' %}
+                                        <span class="badge bg-success">Годен</span>
+                                    {% elif inspection.status == 'failed' %}
+                                        <span class="badge bg-danger">Негоден</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Изисква внимание</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <a href="{% url 'inspection_detail' inspection.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Преглед
+                                </a>
+                            </div>
                         </li>
                         {% endfor %}
                     </ul>
+                    <div class="mt-3 text-center">
+                        <a href="{% url 'inspection_list' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-outline-info">
+                            Всички проверки
+                        </a>
+                    </div>
                 {% else %}
-                    <p class="text-muted">No inspections yet.</p>
+                    <p class="text-muted">Все още няма записани проверки.</p>
+                    <a href="{% url 'inspection_create' %}?equipment={{ equipment.pk }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Добави първата проверка
+                    </a>
                 {% endif %}
             </div>
         </div>
     </div>
+
     <div class="col-md-6">
         <div class="card mb-4">
-            <div class="card-header bg-warning text-dark">
-                <h5 class="mb-0">Recent Maintenance</h5>
+            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-wrench"></i> Последна поддръжка</h5>
+                <a href="{% url 'maintenance_create' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-light">
+                    <i class="bi bi-plus"></i> Нова
+                </a>
             </div>
             <div class="card-body">
                 {% if maintenance_records %}
                     <ul class="list-group">
                         {% for record in maintenance_records %}
                         <li class="list-group-item">
-                            <strong>{{ record.maintenance_type.name }}</strong><br>
-                            <small>{{ record.performed_date }} - {{ record.performed_by }}</small>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong>{{ record.maintenance_type.name }}</strong><br>
+                                    <small class="text-muted">{{ record.performed_date }} | {{ record.performed_by }}</small>
+                                </div>
+                                <div>
+                                    {% if record.result == 'passed' %}
+                                        <span class="badge bg-success">Годен</span>
+                                    {% elif record.result == 'failed' %}
+                                        <span class="badge bg-danger">Негоден</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Условно</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if record.next_due_date %}
+                            <small class="text-muted">Следваща дата: {{ record.next_due_date }}</small>
+                            {% endif %}
+                            <div class="mt-2">
+                                <a href="{% url 'maintenance_detail' record.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Преглед
+                                </a>
+                            </div>
                         </li>
                         {% endfor %}
                     </ul>
+                    <div class="mt-3 text-center">
+                        <a href="{% url 'maintenance_list' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-outline-info">
+                            Всички записи
+                        </a>
+                    </div>
                 {% else %}
-                    <p class="text-muted">No maintenance records yet.</p>
+                    <p class="text-muted">Все още няма записи за поддръжка.</p>
+                    <a href="{% url 'maintenance_create' %}?equipment={{ equipment.pk }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Добави първия запис
+                    </a>
                 {% endif %}
             </div>
         </div>
     </div>
+</div>
+
+<div class="mt-3">
+    <a href="{% url 'equipment_list' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Назад към списъка
+    </a>
 </div>
 {% endblock %}

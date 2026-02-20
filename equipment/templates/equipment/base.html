@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
@@ -9,9 +9,82 @@
     <style>
         body {
             padding-top: 56px;
+            background-color: #f8f9fa;
         }
         .navbar-brand {
             font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .navbar .nav-link.active {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 5px;
+        }
+        /* Картите на Табло */
+        .Табло-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+        }
+        .Табло-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .Табло-card .card-body {
+            padding: 1.5rem;
+        }
+        .Табло-card .display-4 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 0.5rem 0;
+        }
+        .Табло-card .card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        .Табло-card .btn {
+            margin-top: 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        /* Collapse секции */
+        .collapse .card-body {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        .collapse .list-group-item {
+            border: none;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        .collapse .list-group-item:last-child {
+            border-bottom: none;
+        }
+        /* Статус badge-ове */
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+        /* Action бутони */
+        .btn-sm {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.6rem;
+        }
+        /* Quick actions section */
+        .quick-actions {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .quick-actions .btn {
+            margin: 0.5rem;
         }
     </style>
 </head>
@@ -19,60 +92,60 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'dashboard' %}">
-                <i class="bi bi-gear-fill"></i> Lab Equipment
+                <i class="bi bi-gear-fill"></i> Лабораторно Оборудване
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
+                    <!-- Табло -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'dashboard' %}">
-                            <i class="bi bi-house-door"></i> Dashboard
+                        <a class="nav-link {% if request.resolver_match.url_name == 'Табло' %}active{% endif %}" href="{% url 'dashboard' %}">
+                            <i class="bi bi-speedometer2"></i> Табло
                         </a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="equipmentDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-gear"></i> Equipment
+
+                    <!-- Оборудване -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'equipment' in request.path %}active{% endif %}" href="{% url 'equipment_list' %}">
+                            <i class="bi bi-gear"></i> Оборудване
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'equipment_list' %}">All Equipment</a></li>
-                            <li><a class="dropdown-item" href="{% url 'equipment_create' %}">Add Equipment</a></li>
-                        </ul>
                     </li>
+
+                    <!-- Дейности -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="inspectionDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-clipboard-check"></i> Inspections
+                        <a class="nav-link dropdown-toggle {% if 'inspection' in request.path or 'maintenance' in request.path %}active{% endif %}"
+                           href="#" id="activitiesDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-list-check"></i> Дейности
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'inspection_list' %}">All Inspections</a></li>
-                            <li><a class="dropdown-item" href="{% url 'inspection_create' %}">Add Inspection</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="maintenanceDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-wrench"></i> Maintenance
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'maintenance_list' %}">All Maintenance</a></li>
-                            <li><a class="dropdown-item" href="{% url 'maintenance_create' %}">Add Maintenance</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="setupDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-tools"></i> Setup
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><h6 class="dropdown-header">Equipment Setup</h6></li>
-                            <li><a class="dropdown-item" href="{% url 'manufacturer_list' %}">Manufacturers</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category_list' %}">Categories</a></li>
+                            <li><h6 class="dropdown-header"><i class="bi bi-clipboard-check"></i> Проверки</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'inspection_list' %}">Всички проверки</a></li>
+                            <li><a class="dropdown-item" href="{% url 'inspection_create' %}">Нова проверка</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><h6 class="dropdown-header">Process Setup</h6></li>
-                            <li><a class="dropdown-item" href="{% url 'maintenance_type_list' %}">Maintenance Types</a></li>
-                            <li><a class="dropdown-item" href="{% url 'inspection_type_list' %}">Inspection Types</a></li>
+                            <li><h6 class="dropdown-header"><i class="bi bi-wrench"></i> Поддръжка</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'maintenance_list' %}">Всички записи</a></li>
+                            <li><a class="dropdown-item" href="{% url 'maintenance_create' %}">Нов запис</a></li>
                         </ul>
                     </li>
-                </ul></div>
+
+                    <!-- Настройки -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if 'manufacturer' in request.path or 'category' in request.path or 'type' in request.path %}active{% endif %}"
+                           href="#" id="setupDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear-wide-connected"></i> Настройки
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'manufacturer_list' %}"><i class="bi bi-building"></i> Производители</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category_list' %}"><i class="bi bi-tags"></i> Категории</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'inspection_type_list' %}"><i class="bi bi-clipboard2-check"></i> Типове проверки</a></li>
+                            <li><a class="dropdown-item" href="{% url 'maintenance_type_list' %}"><i class="bi bi-tools"></i> Типове поддръжка</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 

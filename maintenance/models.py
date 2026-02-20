@@ -5,90 +5,129 @@ from dateutil.relativedelta import relativedelta
 
 class MaintenanceType(models.Model):
     TYPE_CHOICES = [
-        ('calibration', 'Calibration'),
-        ('validation', 'OQ/PV Validation'),
-        ('technical_service', 'Technical Service'),
-        ('repair', 'Repair'),
+        ('calibration', 'Калибровка'),
+        ('validation', 'OQ/PV Валидиране'),
+        ('technical_service', 'Технически преглед'),
+        ('repair', 'Ремонт'),
     ]
 
     name = models.CharField(
         max_length=100,
-        help_text="Maintenance type name"
+        help_text="Наименование на типа поддръжка"
     )
     type = models.CharField(
         max_length=20,
-        choices=TYPE_CHOICES
+        choices=TYPE_CHOICES,
+        help_text="Тип на поддръжката"
     )
     period_months = models.PositiveIntegerField(
         default=12,
-        help_text="Period in months (e.g., 12 for annual, 6 for semi-annual)"
+        help_text="Периодичност в месеци (например: 12 за годишна, 6 за шестмесечна)"
     )
     description = models.TextField(
-        help_text="Description of the maintenance type"
+        help_text="Описание на типа поддръжка"
     )
 
     class Meta:
-        verbose_name = "Maintenance Type"
-        verbose_name_plural = "Maintenance Types"
+        verbose_name = "Тип поддръжка"
+        verbose_name_plural = "Типове поддръжка"
+        ordering = ['type', 'name']
 
     def __str__(self):
         return f"{self.name} ({self.get_type_display()})"
 
 
 class MaintenanceRecord(models.Model):
+    RESULT_CHOICES = [
+        ('passed', 'Годен'),
+        ('failed', 'Негоден'),
+        ('conditional', 'Условно годен'),
+    ]
+
+    CURRENCY_CHOICES = [
+        ('BGN', 'BGN (Лева)'),
+        ('EUR', 'EUR (Евро)'),
+    ]
+
     equipment = models.ForeignKey(
         Equipment,
         on_delete=models.CASCADE,
-        related_name='maintenance_records'
+        related_name='maintenance_records',
+        help_text="Оборудване"
     )
     maintenance_type = models.ForeignKey(
         MaintenanceType,
         on_delete=models.PROTECT,
-        related_name='records'
+        related_name='records',
+        help_text="Тип поддръжка"
     )
     performed_date = models.DateField(
-        help_text="Date when maintenance was performed"
+        help_text="Дата на изпълнение"
     )
     next_due_date = models.DateField(
         blank=True,
         null=True,
-        help_text="Next due date (auto-calculated from performed_date + period)"
+        help_text="Следваща дата (автоматично изчислена от дата + период)"
     )
     performed_by = models.CharField(
         max_length=200,
-        help_text="Department or person name (e.g., Metrology/QC)"
+        help_text="Изпълнено от (отдел или име: Метрология/QC)"
     )
     certificate_number = models.CharField(
         max_length=100,
         blank=True,
         null=True,
-        help_text="Certificate/Protocol number"
+        help_text="Номер на сертификат/протокол"
     )
-    results = models.TextField(
-        help_text="Calibration/Validation results"
+    result = models.CharField(
+        max_length=20,
+        choices=RESULT_CHOICES,
+        default='passed',
+        help_text="Резултат от проверката"
+    )
+    work_performed = models.TextField(
+        blank=True,
+        default='',
+        help_text="Извършена работа/резултати"
+    )
+    parts_used = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Използвани части/материали"
     )
     cost = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         null=True,
-        blank=True
+        blank=True,
+        help_text="Цена"
     )
-    notes = models.TextField(blank=True, null=True)
+    currency = models.CharField(
+        max_length=3,
+        choices=CURRENCY_CHOICES,
+        default='BGN',
+        help_text="Валута"
+    )
+    notes = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Допълнителни бележки"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = "Maintenance Record"
-        verbose_name_plural = "Maintenance Records"
+        verbose_name = "Запис за поддръжка"
+        verbose_name_plural = "Записи за поддръжка"
         ordering = ['-performed_date']
 
     def __str__(self):
         return f"{self.equipment.asset_number} - {self.maintenance_type.name} ({self.performed_date})"
 
     def save(self, *args, **kwargs):
-        """Auto-calculate next_due_date based on maintenance_type period"""
+        """Автоматично изчислява next_due_date на база периода на типа поддръжка"""
         if not self.next_due_date and self.performed_date and self.maintenance_type:
             self.next_due_date = self.performed_date + relativedelta(months=self.maintenance_type.period_months)
         super().save(*args, **kwargs)
-        # Update equipment status after saving maintenance record
+        # Актуализира статуса на оборудването след записване
         self.equipment.update_status()
 
