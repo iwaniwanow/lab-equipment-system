@@ -1,6 +1,9 @@
 {% extends 'equipment/base.html' %}
-
+{% load static %}
 {% block title %}Изтриване на оборудване - {{ equipment.asset_number }}{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'equipment/css/delete-confirm.css' %}">
+{% endblock %}
 
 {% block content %}
 <nav aria-label="breadcrumb">
@@ -12,38 +15,50 @@
     </ol>
 </nav>
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card border-danger">
-            <div class="card-header bg-danger text-white">
-                <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Потвърждение за изтриване</h4>
+<div class="delete-modal">
+    <div class="card delete-card">
+        <div class="delete-header text-white">
+            <div class="delete-icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
             </div>
-            <div class="card-body">
-                <p class="lead">Сигурни ли сте, че искате да изтриете това оборудване?</p>
+            <h4 class="mt-2">Потвърждение за изтриване</h4>
+        </div>
+        <div class="card-body">
+            <p class="lead text-center mb-3">Сигурни ли сте, че искате да изтриете това оборудване?</p>
 
-                <div class="alert alert-warning">
-                    <strong><i class="bi bi-gear"></i> {{ equipment.asset_number }} - {{ equipment.name }}</strong>
-                    <br><small>{{ equipment.category.name }} | {{ equipment.manufacturer.name }}</small>
-                </div>
-
-                <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-circle"></i> <strong>Внимание!</strong>
-                    Изтриването ще премахне всички свързани записи за проверки и поддръжка!
-                </div>
-
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="d-flex justify-content-between mt-4">
-                        <a href="{% url 'equipment_detail' equipment.pk %}" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left"></i> Откажи
-                        </a>
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> Да, изтрий
-                        </button>
+            <div class="warning-box">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-gear-fill" style="font-size: 2rem; margin-right: 1rem;"></i>
+                    <div>
+                        <strong>{{ equipment.asset_number }} - {{ equipment.name }}</strong>
+                        <small>{{ equipment.category.name }} | {{ equipment.manufacturer.name }}</small>
                     </div>
-                </form>
+                </div>
             </div>
+
+            <div class="danger-box">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-exclamation-circle-fill" style="font-size: 1.5rem; margin-right: 0.75rem;"></i>
+                    <div>
+                        <strong>Внимание!</strong>
+                        <p class="mb-0 mt-1">Изтриването ще премахне всички свързани записи за проверки и поддръжка!</p>
+                    </div>
+                </div>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between gap-2 mt-3">
+                    <a href="{% url 'equipment_detail' equipment.pk %}" class="btn btn-cancel flex-fill">
+                        <i class="bi bi-arrow-left"></i> Откажи
+                    </a>
+                    <button type="submit" class="btn btn-delete flex-fill">
+                        <i class="bi bi-trash-fill"></i> Изтрий
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 {% endblock %}
+

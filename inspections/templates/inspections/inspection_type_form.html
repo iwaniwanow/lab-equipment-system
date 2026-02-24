@@ -1,23 +1,61 @@
-﻿{% extends 'equipment/base.html' %}
-{% block title %}{{ action }} Тип проверка{% endblock %}
+﻿﻿{% extends 'equipment/base.html' %}
+{% block title %}{{ action }} тип проверка{% endblock %}
 {% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'inspection_type_list' %}">Типове проверки</a></li>
+        <li class="breadcrumb-item active">{{ action }}</li>
+    </ol>
+</nav>
+
 <div class="row mb-4">
     <div class="col">
-        <h1>{{ action }} Тип проверка</h1>
+        <h1 class="display-6 fw-bold">
+            <i class="bi bi-list-check text-primary"></i> {{ action }} тип проверка
+        </h1>
     </div>
 </div>
-<div class="card">
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Данни за типа проверка</h5>
+    </div>
     <div class="card-body">
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
-            <div class="d-flex justify-content-between mt-4">
-                <a href="{% url 'inspection_type_list' %}" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Откажи
-                </a>
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">
+                        {{ field.label }}
+                        {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="text-danger">
+                            {{ field.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="d-flex gap-2 mt-4">
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-circle"></i> Запиши
                 </button>
+                <a href="{% url 'inspection_type_list' %}" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Откажи
+                </a>
             </div>
         </form>
     </div>

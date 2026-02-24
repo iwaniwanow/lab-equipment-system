@@ -1,38 +1,38 @@
 ﻿{% extends 'equipment/base.html' %}
+{% load static %}
 {% block title %}Изтриване на проверка{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'equipment/css/delete-confirm.css' %}">{% endblock %}
 {% block content %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'inspection_list' %}">Проверки</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'inspection_detail' inspection.pk %}">Проверка #{{ inspection.pk }}</a></li>
-        <li class="breadcrumb-item active">Изтриване</li>
-    </ol>
-</nav>
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card border-danger">
-            <div class="card-header bg-danger text-white">
-                <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Потвърждение за изтриване</h4>
-            </div>
-            <div class="card-body">
-                <p class="lead">Сигурни ли сте, че искате да изтриете тази проверка?</p>
-                <div class="alert alert-warning">
-                    <strong>{{ inspection.equipment.asset_number }} - {{ inspection.equipment.name }}</strong>
-                    <br><small>{{ inspection.inspection_type.name }} - {{ inspection.inspection_date }}</small>
-                </div>
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="d-flex justify-content-between mt-4">
-                        <a href="{% url 'inspection_detail' inspection.pk %}" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left"></i> Откажи
-                        </a>
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> Да, изтрий
-                        </button>
+<div class="delete-modal">
+    <div class="card delete-card">
+        <div class="delete-header text-white">
+            <div class="delete-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+            <h4 class="mt-2">Потвърждение за изтриване</h4>
+        </div>
+        <div class="card-body">
+            <p class="lead text-center">Сигурни ли сте, че искате да изтриете тази проверка?</p>
+            <div class="warning-box">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-clipboard-check-fill" style="font-size: 1.8rem; margin-right: 0.75rem;"></i>
+                    <div>
+                        <strong>{{ inspection.equipment.asset_number }} - {{ inspection.equipment.name }}</strong>
+                        <small>{{ inspection.inspection_type.name }} | {{ inspection.inspection_date }}</small>
                     </div>
-                </form>
+                </div>
             </div>
+            <div class="danger-box">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-exclamation-circle-fill" style="font-size: 1.3rem; margin-right: 0.6rem;"></i>
+                    <div><strong>Внимание!</strong><p class="mb-0 mt-1">Записът ще бъде изтрит завинаги.</p></div>
+                </div>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex gap-2 mt-3">
+                    <a href="{% url 'inspection_list' %}" class="btn btn-cancel flex-fill"><i class="bi bi-arrow-left"></i> Откажи</a>
+                    <button type="submit" class="btn btn-delete flex-fill"><i class="bi bi-trash-fill"></i> Изтрий</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

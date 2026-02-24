@@ -1,0 +1,60 @@
+{% extends 'equipment/base.html' %}
+{% block title %}Звена{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-diagram-3"></i> Звена</h1>
+    <a href="{% url 'department_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Добави звено
+    </a>
+</div>
+
+{% if departments %}
+    <div class="row">
+        {% for dept in departments %}
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-diagram-3"></i> {{ dept.code }}
+                        </h5>
+                        <h6 class="text-muted">{{ dept.name }}</h6>
+                        {% if dept.full_name %}
+                            <p class="card-text small">{{ dept.full_name }}</p>
+                        {% endif %}
+                        {% if dept.manager %}
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-person"></i> {{ dept.manager }}
+                            </p>
+                        {% endif %}
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <span class="badge bg-info">{{ dept.locations.count }} локации</span>
+                                <span class="badge bg-success">{{ dept.technicians.count }} техници</span>
+                            </div>
+                            {% if dept.is_active %}
+                                <span class="badge bg-success">Активно</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Неактивно</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{% url 'department_detail' dept.pk %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye"></i> Преглед
+                        </a>
+                        <a href="{% url 'department_update' dept.pk %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i> Редактирай
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Няма намерени звена.
+        <a href="{% url 'department_create' %}">Добавете първото звено</a>.
+    </div>
+{% endif %}
+{% endblock %}
+

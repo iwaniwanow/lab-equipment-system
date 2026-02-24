@@ -1,16 +1,131 @@
 ﻿{% extends 'equipment/base.html' %}
-{% block title %}{{ action }} Проверка{% endblock %}
+{% block title %}{{ action }} проверка{% endblock %}
 {% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'inspection_list' %}">Проверки</a></li>
+        <li class="breadcrumb-item active">{{ action }}</li>
+    </ol>
+</nav>
+
 <div class="row mb-4">
     <div class="col">
-        <h1>{{ action }} Проверка</h1>
+        <h1 class="display-6 fw-bold">
+            <i class="bi bi-clipboard-check-fill text-primary"></i> {{ action }} проверка
+        </h1>
     </div>
 </div>
-<div class="card">
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Данни за проверката</h5>
+    </div>
     <div class="card-body">
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.equipment.id_for_label }}" class="form-label">
+                        {{ form.equipment.label }} <span class="text-danger">*</span>
+                    </label>
+                    {{ form.equipment }}
+                    {% if form.equipment.errors %}
+                        <div class="text-danger">{{ form.equipment.errors }}</div>
+                    {% endif %}
+                    {% if form.equipment.help_text %}
+                        <small class="form-text text-muted">{{ form.equipment.help_text }}</small>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.inspection_type.id_for_label }}" class="form-label">
+                        {{ form.inspection_type.label }} <span class="text-danger">*</span>
+                    </label>
+                    {{ form.inspection_type }}
+                    {% if form.inspection_type.errors %}
+                        <div class="text-danger">{{ form.inspection_type.errors }}</div>
+                    {% endif %}
+                    {% if form.inspection_type.help_text %}
+                        <small class="form-text text-muted">{{ form.inspection_type.help_text }}</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.inspection_date.id_for_label }}" class="form-label">
+                        {{ form.inspection_date.label }} <span class="text-danger">*</span>
+                    </label>
+                    {{ form.inspection_date }}
+                    {% if form.inspection_date.errors %}
+                        <div class="text-danger">{{ form.inspection_date.errors }}</div>
+                    {% endif %}
+                    {% if form.inspection_date.help_text %}
+                        <small class="form-text text-muted">{{ form.inspection_date.help_text }}</small>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.status.id_for_label }}" class="form-label">
+                        {{ form.status.label }} <span class="text-danger">*</span>
+                    </label>
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                        <div class="text-danger">{{ form.status.errors }}</div>
+                    {% endif %}
+                    {% if form.status.help_text %}
+                        <small class="form-text text-muted">{{ form.status.help_text }}</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label for="{{ form.technician.id_for_label }}" class="form-label">
+                        {{ form.technician.label }}
+                    </label>
+                    {{ form.technician }}
+                    {% if form.technician.errors %}
+                        <div class="text-danger">{{ form.technician.errors }}</div>
+                    {% endif %}
+                    {% if form.technician.help_text %}
+                        <small class="form-text text-muted">{{ form.technician.help_text }}</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.findings.id_for_label }}" class="form-label">
+                    {{ form.findings.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.findings }}
+                {% if form.findings.errors %}
+                    <div class="text-danger">{{ form.findings.errors }}</div>
+                {% endif %}
+                {% if form.findings.help_text %}
+                    <small class="form-text text-muted">{{ form.findings.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.corrective_actions.id_for_label }}" class="form-label">
+                    {{ form.corrective_actions.label }}
+                </label>
+                {{ form.corrective_actions }}
+                {% if form.corrective_actions.errors %}
+                    <div class="text-danger">{{ form.corrective_actions.errors }}</div>
+                {% endif %}
+                {% if form.corrective_actions.help_text %}
+                    <small class="form-text text-muted">{{ form.corrective_actions.help_text }}</small>
+                {% endif %}
+            </div>
+
             <div class="d-flex justify-content-between mt-4">
                 <a href="{% url 'inspection_list' %}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Откажи
@@ -23,3 +138,5 @@
     </div>
 </div>
 {% endblock %}
+
+

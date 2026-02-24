@@ -1,10 +1,10 @@
-﻿{% extends 'equipment/base.html' %}
-{% block title %}{{ action }} производител{% endblock %}
+{% extends 'equipment/base.html' %}
+{% block title %}{{ action }} локация{% endblock %}
 {% block content %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'manufacturer_list' %}">Производители</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'location_list' %}">Локации</a></li>
         <li class="breadcrumb-item active">{{ action }}</li>
     </ol>
 </nav>
@@ -12,14 +12,14 @@
 <div class="row mb-4">
     <div class="col">
         <h1 class="display-6 fw-bold">
-            <i class="bi bi-building-fill text-primary"></i> {{ action }} производител
+            <i class="bi bi-geo-alt-fill text-primary"></i> {{ action }} локация
         </h1>
     </div>
 </div>
 
 <div class="card shadow-sm">
     <div class="card-header bg-primary text-white">
-        <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Данни за производителя</h5>
+        <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Данни за локацията</h5>
     </div>
     <div class="card-body">
         <form method="post">
@@ -53,7 +53,7 @@
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-circle"></i> Запиши
                 </button>
-                <a href="{% url 'manufacturer_list' %}" class="btn btn-secondary">
+                <a href="{% url 'location_list' %}" class="btn btn-secondary">
                     <i class="bi bi-x-circle"></i> Откажи
                 </a>
             </div>
@@ -61,3 +61,4 @@
     </div>
 </div>
 {% endblock %}
+

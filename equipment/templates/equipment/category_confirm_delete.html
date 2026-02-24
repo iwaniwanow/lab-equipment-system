@@ -1,53 +1,40 @@
 {% extends 'equipment/base.html' %}
-
+{% load static %}
 {% block title %}Изтриване на категория - {{ category.name }}{% endblock %}
-
+{% block extra_css %}<link rel="stylesheet" href="{% static 'equipment/css/delete-confirm.css' %}">{% endblock %}
 {% block content %}
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'category_list' %}">Категории</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'category_detail' category.pk %}">{{ category.name }}</a></li>
-        <li class="breadcrumb-item active">Изтриване</li>
-    </ol>
-</nav>
-
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card border-danger">
-            <div class="card-header bg-danger text-white">
-                <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Потвърждение за изтриване</h4>
-            </div>
-            <div class="card-body">
-                <p class="lead">Сигурни ли сте, че искате да изтриете тази категория?</p>
-
-                <div class="alert alert-warning">
-                    <strong><i class="bi bi-tag"></i> {{ category.name }}</strong>
-                    {% if category.description %}
-                        <br><small>{{ category.description }}</small>
-                    {% endif %}
+<div class="delete-modal">
+    <div class="card delete-card">
+        <div class="delete-header text-white">
+            <div class="delete-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+            <h4 class="mt-2">Потвърждение за изтриване</h4>
+        </div>
+        <div class="card-body">
+            <p class="lead text-center mb-3">Сигурни ли сте, че искате да изтриете тази категория?</p>
+            <div class="warning-box">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-tags-fill" style="font-size: 2rem; margin-right: 1rem;"></i>
+                    <div><strong>{{ category.name }}</strong></div>
                 </div>
-
-                {% if category.equipment.count > 0 %}
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-circle"></i> <strong>Внимание!</strong>
-                        Тази категория има <strong>{{ category.equipment.count }} оборудване</strong> свързани с нея.
-                        Изтриването може да се провали ако има свързано оборудване.
-                    </div>
-                {% endif %}
-
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="d-flex justify-content-between mt-4">
-                        <a href="{% url 'category_detail' category.pk %}" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left"></i> Откажи
-                        </a>
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> Да, изтрий
-                        </button>
-                    </div>
-                </form>
             </div>
+            {% if category.equipment.count > 0 %}
+                <div class="danger-box">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-exclamation-circle-fill" style="font-size: 1.5rem; margin-right: 0.75rem;"></i>
+                        <div>
+                            <strong>Внимание!</strong>
+                            <p class="mb-0 mt-1">Тази категория има <strong>{{ category.equipment.count }} оборудване</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between gap-2 mt-3">
+                    <a href="{% url 'category_list' %}" class="btn btn-cancel flex-fill"><i class="bi bi-arrow-left"></i> Откажи</a>
+                    <button type="submit" class="btn btn-delete flex-fill"><i class="bi bi-trash-fill"></i> Изтрий</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

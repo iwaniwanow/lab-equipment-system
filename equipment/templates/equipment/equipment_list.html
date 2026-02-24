@@ -1,12 +1,19 @@
-﻿{% extends 'equipment/base.html' %}
+﻿﻿{% extends 'equipment/base.html' %}
 {% load equipment_filters %}
-
-{% block title %}Списък оборудване - Лабораторно Оборудване{% endblock %}
-
+{% block title %}Списък оборудване{% endblock %}
 {% block content %}
-<div class="row mb-4">
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
+        <li class="breadcrumb-item active">Оборудване</li>
+    </ol>
+</nav>
+
+<div class="row mb-4 align-items-center">
     <div class="col">
-        <h1 class="display-4">Списък оборудване</h1>
+        <h1 class="display-6 fw-bold">
+            <i class="bi bi-gear-wide-connected text-primary"></i> Списък оборудване
+        </h1>
     </div>
     <div class="col-auto">
         <a href="{% url 'equipment_create' %}" class="btn btn-primary">
@@ -15,9 +22,9 @@
     </div>
 </div>
 
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="mb-0">Филтри</h5>
+<div class="card mb-4 shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-funnel"></i> Филтри</h5>
     </div>
     <div class="card-body">
         <form method="get" class="row g-3">
@@ -26,7 +33,7 @@
                 <select name="category" id="category" class="form-select">
                     <option value="">Всички категории</option>
                     {% for cat in categories %}
-                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -34,17 +41,17 @@
                 <label for="status" class="form-label">Статус</label>
                 <select name="status" id="status" class="form-select">
                     <option value="">Всички статуси</option>
-                    <option value="active">В експлоатация</option>
-                    <option value="pending_validation">Чака валидиране</option>
-                    <option value="pending_calibration">Чака калибровка</option>
-                    <option value="pending_technical_review">Чака технически преглед</option>
-                    <option value="pending_multiple">Чака множество проверки</option>
-                    <option value="maintenance">На поддръжка</option>
-                    <option value="out_of_service">Извън експлоатация</option>
+                    <option value="active" {% if request.GET.status == "active" %}selected{% endif %}>В експлоатация</option>
+                    <option value="pending_validation" {% if request.GET.status == "pending_validation" %}selected{% endif %}>Чака валидиране</option>
+                    <option value="pending_calibration" {% if request.GET.status == "pending_calibration" %}selected{% endif %}>Чака калибровка</option>
+                    <option value="pending_technical_review" {% if request.GET.status == "pending_technical_review" %}selected{% endif %}>Чака технически преглед</option>
+                    <option value="pending_multiple" {% if request.GET.status == "pending_multiple" %}selected{% endif %}>Чака множество проверки</option>
+                    <option value="maintenance" {% if request.GET.status == "maintenance" %}selected{% endif %}>На поддръжка</option>
+                    <option value="out_of_service" {% if request.GET.status == "out_of_service" %}selected{% endif %}>Извън експлоатация</option>
                 </select>
             </div>
-            <div class="col-md-4 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">
+            <div class="col-md-4 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-primary">
                     <i class="bi bi-funnel"></i> Филтрирай
                 </button>
                 <a href="{% url 'equipment_list' %}" class="btn btn-secondary">
@@ -55,46 +62,69 @@
     </div>
 </div>
 
-<div class="table-responsive">
-    <table class="table table-striped table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>ASSET Номер</th>
-                <th>Наименование</th>
-                <th>Категория</th>
-                <th>Локация</th>
-                <th>Статус</th>
-                <th>Действия</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for eq in equipment %}
-            <tr>
-                <td><strong>{{ eq.asset_number }}</strong></td>
-                <td>{{ eq.name }}</td>
-                <td>{{ eq.category.name }}</td>
-                <td>{{ eq.location }}</td>
-                <td>
-                    <span class="badge bg-{{ eq.status|status_badge }}">{{ eq.get_status_display }}</span>
-                </td>
-                <td>
-                    <a href="{% url 'equipment_detail' eq.pk %}" class="btn btn-sm btn-info">
-                        <i class="bi bi-eye"></i> Преглед
-                    </a>
-                    <a href="{% url 'equipment_update' eq.pk %}" class="btn btn-sm btn-warning">
-                        <i class="bi bi-pencil"></i> Редактирай
-                    </a>
-                    <a href="{% url 'equipment_delete' eq.pk %}" class="btn btn-sm btn-danger">
-                        <i class="bi bi-trash"></i> Изтрий
-                    </a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center text-muted">Няма намерено оборудване.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">ASSET Номер</th>
+                        <th>Наименование</th>
+                        <th>Категория</th>
+                        <th>Локация</th>
+                        <th>Статус</th>
+                        <th style="width: 220px;">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for eq in equipment %}
+                    <tr>
+                        <td class="ps-3"><strong class="text-primary">{{ eq.asset_number }}</strong></td>
+                        <td>{{ eq.name }}</td>
+                        <td>
+                            {% if eq.category %}
+                                <span class="badge bg-light text-dark border">
+                                    <i class="bi bi-tag"></i> {{ eq.category.name }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if eq.location %}
+                                <span class="text-muted"><i class="bi bi-geo-alt"></i> {{ eq.location }}</span>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ eq.status|status_badge }}">{{ eq.get_status_display }}</span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'equipment_detail' eq.pk %}" class="btn btn-sm btn-outline-info" title="Преглед">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'equipment_update' eq.pk %}" class="btn btn-sm btn-outline-warning" title="Редактирай">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'equipment_delete' eq.pk %}" class="btn btn-sm btn-outline-danger" title="Изтрий">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                            <p class="mb-0 mt-2">Няма намерено оборудване.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

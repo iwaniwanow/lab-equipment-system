@@ -44,8 +44,21 @@
                         <td>{{ inspection.next_inspection_date }}</td>
                     </tr>
                     <tr>
-                        <th>Инспектор:</th>
-                        <td>{{ inspection.inspector_name }}</td>
+                        <th>Техник/Изпълнител:</th>
+                        <td>
+                            {% if inspection.technician %}
+                                <a href="{% url 'technician_detail' inspection.technician.pk %}">
+                                    {{ inspection.technician.get_full_name }}
+                                </a>
+                                {% if inspection.technician.department %}
+                                    <br><small class="text-muted">{{ inspection.technician.department.code }} - {{ inspection.technician.department.name }}</small>
+                                {% elif inspection.technician.company %}
+                                    <br><small class="text-muted">{{ inspection.technician.company }}</small>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-muted">Не е посочен</span>
+                            {% endif %}
+                        </td>
                     </tr>
                     <tr>
                         <th>Статус:</th>

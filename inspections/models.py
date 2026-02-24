@@ -93,9 +93,19 @@ class Inspection(models.Model):
         choices=STATUS_CHOICES,
         help_text="Статус на проверката"
     )
+    technician = models.ForeignKey(
+        'equipment.Technician',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='inspections',
+        verbose_name="Техник/Изпълнител",
+        help_text="Техник извършил проверката"
+    )
     inspector_name = models.CharField(
         max_length=100,
-        help_text="Име на проверяващия"
+        blank=True,
+        help_text="Име на проверяващия (старо поле за справка)"
     )
     findings = models.TextField(
         help_text="Констатации и резултати от проверката"

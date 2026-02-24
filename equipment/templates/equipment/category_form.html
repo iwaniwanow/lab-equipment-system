@@ -1,23 +1,69 @@
-﻿{% extends 'equipment/base.html' %}
-{% block title %}{{ action }} Категория{% endblock %}
+﻿﻿{% extends 'equipment/base.html' %}
+{% block title %}{{ action }} категория{% endblock %}
 {% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'category_list' %}">Категории</a></li>
+        <li class="breadcrumb-item active">{{ action }}</li>
+    </ol>
+</nav>
+
 <div class="row mb-4">
     <div class="col">
-        <h1>{{ action }} Категория</h1>
+        <h1 class="display-6 fw-bold">
+            <i class="bi bi-tags-fill text-primary"></i> {{ action }} категория
+        </h1>
     </div>
 </div>
-<div class="card">
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Данни за категорията</h5>
+    </div>
     <div class="card-body">
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
-            <div class="d-flex justify-content-between mt-4">
-                <a href="{% url 'category_list' %}" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Откажи
-                </a>
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="mb-3">
+                <label for="{{ form.name.id_for_label }}" class="form-label">
+                    {{ form.name.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <div class="text-danger">{{ form.name.errors }}</div>
+                {% endif %}
+                {% if form.name.help_text %}
+                    <small class="form-text text-muted">{{ form.name.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.description.id_for_label }}" class="form-label">
+                    {{ form.description.label }}
+                </label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <div class="text-danger">{{ form.description.errors }}</div>
+                {% endif %}
+                {% if form.description.help_text %}
+                    <small class="form-text text-muted">{{ form.description.help_text }}</small>
+                {% endif %}
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-circle"></i> Запиши
                 </button>
+                <a href="{% url 'category_list' %}" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Откажи
+                </a>
             </div>
         </form>
     </div>

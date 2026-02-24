@@ -1,6 +1,4 @@
 from django import forms
-from django.utils import timezone
-from datetime import timedelta
 from .models import Inspection, InspectionType
 from equipment.models import Equipment
 
@@ -41,7 +39,7 @@ class InspectionForm(forms.ModelForm):
         model = Inspection
         fields = [
             'equipment', 'inspection_type', 'inspection_date',
-            'status', 'inspector_name',
+            'status', 'technician',
             'findings', 'corrective_actions'
         ]
         widgets = {
@@ -52,10 +50,7 @@ class InspectionForm(forms.ModelForm):
                 'type': 'date'
             }),
             'status': forms.Select(attrs={'class': 'form-select'}),
-            'inspector_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Име на проверяващия'
-            }),
+            'technician': forms.Select(attrs={'class': 'form-select'}),
             'findings': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
@@ -72,11 +67,14 @@ class InspectionForm(forms.ModelForm):
             'inspection_type': 'Тип проверка',
             'inspection_date': 'Дата на проверка',
             'status': 'Статус',
-            'inspector_name': 'Проверяващ',
+            'technician': 'Техник/Изпълнител',
             'findings': 'Констатации',
             'corrective_actions': 'Коригиращи действия'
         }
         help_texts = {
-            'inspection_date': 'Следващата дата на проверка ще бъде изчислена автоматично'
+            'inspection_date': 'Следващата дата на проверка ще бъде изчислена автоматично',
+            'technician': 'Изберете техник от списъка'
         }
+
+
 

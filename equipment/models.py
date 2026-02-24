@@ -26,8 +26,8 @@ class Manufacturer(models.Model):
     )
 
     class Meta:
-        verbose_name = "Manufacturer"
-        verbose_name_plural = "Manufacturers"
+        verbose_name = "Производител"
+        verbose_name_plural = "Производители"
         ordering = ['name']
 
     def __str__(self):
@@ -46,8 +46,8 @@ class EquipmentCategory(models.Model):
     )
 
     class Meta:
-        verbose_name = "Equipment Category"
-        verbose_name_plural = "Equipment Categories"
+        verbose_name = "Категория оборудване"
+        verbose_name_plural = "Категории оборудване"
         ordering = ['name']
 
     def __str__(self):
@@ -102,9 +102,21 @@ class Equipment(models.Model):
         unique=True,
         help_text="Сериен номер"
     )
-    location = models.CharField(
+    location_old = models.CharField(
         max_length=200,
-        help_text="Локация в лабораторията"
+        null=True,
+        blank=True,
+        verbose_name="Локация (старо поле)",
+        help_text="Стара локация (само текст)"
+    )
+    location = models.ForeignKey(
+        'Location',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='equipment',
+        verbose_name="Локация",
+        help_text="Локация на оборудването"
     )
 
     # Дата на въвеждане в експлоатация
@@ -157,24 +169,20 @@ class Equipment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Equipment"
-        verbose_name_plural = "Equipment"
+        verbose_name = "Оборудване"
+        verbose_name_plural = "Оборудване"
         ordering = ['asset_number']
 
     def __str__(self):
         return f"{self.asset_number} - {self.name}"
 
     def get_missing_requirements(self):
-        """
-        Връща списък с липсващите изисквания при въвеждане в експлоатация
-        """
         missing = []
 
         if not self.commissioning_date:
             missing.append('commissioning_date')
-            return missing  # Ако няма дата, няма смисъл да проверяваме останалото
+            return missing
 
-        # Проверка за валидиране
         if self.requires_oq_pv:
             has_validation = self.maintenance_records.filter(
                 maintenance_type__type='validation'
@@ -182,7 +190,6 @@ class Equipment(models.Model):
             if not has_validation:
                 missing.append('validation')
 
-        # Проверка за калибровка
         if self.requires_calibration:
             has_calibration = self.maintenance_records.filter(
                 maintenance_type__type='calibration'
@@ -190,7 +197,6 @@ class Equipment(models.Model):
             if not has_calibration:
                 missing.append('calibration')
 
-        # Проверка за технически преглед
         if self.requires_technical_review:
             has_technical_review = self.inspections.filter(
                 inspection_type__category='technical_review'
@@ -201,9 +207,6 @@ class Equipment(models.Model):
         return missing
 
     def get_missing_requirements_display(self):
-        """
-        Връща текстово описание на липсващите изисквания на български
-        """
         missing = self.get_missing_requirements()
 
         if not missing:
@@ -224,29 +227,18 @@ class Equipment(models.Model):
             return f"Липсват: {', '.join(missing_text)}"
 
     def get_calculated_status(self):
-        """
-        Автоматично изчислява статуса на оборудването въз основа на:
-        - Изпълнени ли са изискванията при въвеждане в експлоатация (OQ/PV, калибровка, технически преглед)
-        - Просрочени записи за калибровка/валидиране (MaintenanceRecord)
-        - Просрочени технически прегледи (Inspection)
-        - Предупреждение 1 месец преди изтичане на срока
-        - Резултати от последни проверки
-        """
         from datetime import date, timedelta
         today = date.today()
         one_month_ahead = today + timedelta(days=30)
 
-        # 1. Проверка дали са изпълнени изискванията при въвеждане в експлоатация
         missing_requirements = self.get_missing_requirements()
 
         if 'commissioning_date' in missing_requirements:
-            return 'pending_validation'  # Няма дата на въвеждане
+            return 'pending_validation'
 
         if len(missing_requirements) > 1:
-            # Липсват множество изисквания
             return 'pending_multiple'
         elif len(missing_requirements) == 1:
-            # Липсва точно едно изискване
             if 'validation' in missing_requirements:
                 return 'pending_validation'
             elif 'calibration' in missing_requirements:
@@ -254,63 +246,189 @@ class Equipment(models.Model):
             elif 'technical_review' in missing_requirements:
                 return 'pending_technical_review'
 
-        # 2. Проверка за просрочени или скоро изтичащи записи за калибровка
         if self.requires_calibration:
             latest_calibration = self.maintenance_records.filter(
                 maintenance_type__type='calibration'
             ).order_by('-performed_date').first()
 
             if latest_calibration and latest_calibration.next_due_date:
-                # Просрочена калибровка
                 if latest_calibration.next_due_date < today:
                     return 'pending_calibration'
-                # Предупреждение: изтича след 1 месец
                 elif latest_calibration.next_due_date <= one_month_ahead:
                     return 'pending_calibration'
 
-        # 3. Проверка за просрочени или скоро изтичащи записи за валидиране (OQ/PV)
         if self.requires_oq_pv:
             latest_validation = self.maintenance_records.filter(
                 maintenance_type__type='validation'
             ).order_by('-performed_date').first()
 
             if latest_validation and latest_validation.next_due_date:
-                # Просрочено валидиране
                 if latest_validation.next_due_date < today:
                     return 'pending_validation'
-                # Предупреждение: изтича след 1 месец
                 elif latest_validation.next_due_date <= one_month_ahead:
                     return 'pending_validation'
 
-        # 4. Проверка за просрочени или скоро изтичащи технически прегледи
         if self.requires_technical_review:
-            # Вземаме само технически прегледи, НЕ проверки за пригодност
             latest_technical_review = self.inspections.filter(
                 inspection_type__category='technical_review'
             ).order_by('-inspection_date').first()
 
             if latest_technical_review and latest_technical_review.next_inspection_date:
-                # Просрочен технически преглед
                 if latest_technical_review.next_inspection_date < today:
                     return 'pending_technical_review'
-                # Предупреждение: изтича след 1 месец
                 elif latest_technical_review.next_inspection_date <= one_month_ahead:
                     return 'pending_technical_review'
 
-            # Проверка дали последният технически преглед е провален
             if latest_technical_review and latest_technical_review.status == 'failed':
                 return 'out_of_service'
 
-        # 5. Проверка дали последната проверка (общо) е провалена
         latest_any_inspection = self.inspections.order_by('-inspection_date').first()
         if latest_any_inspection and latest_any_inspection.status == 'failed':
             return 'out_of_service'
 
-        # Ако всичко е наред
         return 'active'
 
     def update_status(self):
-        """Update the status field with calculated status"""
         self.status = self.get_calculated_status()
         self.save(update_fields=['status'])
+
+
+class Department(models.Model):
+    code = models.CharField(max_length=10, unique=True, verbose_name="Код на звено")
+    name = models.CharField(max_length=200, verbose_name="Наименование")
+    full_name = models.CharField(max_length=300, verbose_name="Пълно наименование")
+    manager = models.CharField(max_length=200, blank=True, verbose_name="Ръководител")
+    contact = models.CharField(max_length=200, blank=True, verbose_name="Контакт")
+    is_active = models.BooleanField(default=True, verbose_name="Активно")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Звено"
+        verbose_name_plural = "Звена"
+        ordering = ['code']
+
+    def __str__(self):
+        return f"{self.code} - {self.name}"
+
+
+class Location(models.Model):
+    CATEGORY_CHOICES = [
+        ('A', 'Категория A'),
+        ('B', 'Категория B'),
+        ('C', 'Категория C'),
+        ('D', 'Категория D'),
+        ('E', 'Категория E'),
+    ]
+
+    code = models.CharField(max_length=20, unique=True, verbose_name="Код на локация",
+                           help_text="Формат: E-1-102 (Категория-Етаж-Помещение)")
+    category = models.CharField(max_length=1, choices=CATEGORY_CHOICES,
+                               verbose_name="Категория")
+    floor = models.IntegerField(verbose_name="Етаж")
+    room_number = models.CharField(max_length=10, verbose_name="Номер на помещение")
+
+    name = models.CharField(max_length=200, verbose_name="Име на лаборатория/помещение",
+                          help_text="Напр: Лаборатория ККП")
+    department = models.ForeignKey(Department, on_delete=models.SET_NULL,
+                                  null=True, blank=True,
+                                  related_name='locations',
+                                  verbose_name="Звено")
+
+    building = models.CharField(max_length=100, blank=True, verbose_name="Сграда")
+    area_sqm = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True,
+                                   verbose_name="Площ (кв.м)")
+    responsible_person = models.CharField(max_length=200, blank=True,
+                                         verbose_name="Отговорно лице")
+    phone = models.CharField(max_length=20, blank=True, verbose_name="Телефон")
+    notes = models.TextField(blank=True, verbose_name="Забележки")
+
+    has_controlled_temperature = models.BooleanField(default=False,
+                                                     verbose_name="Контролирана температура")
+    has_controlled_humidity = models.BooleanField(default=False,
+                                                  verbose_name="Контролирана влажност")
+
+    is_active = models.BooleanField(default=True, verbose_name="Активна")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Локация"
+        verbose_name_plural = "Локации"
+        ordering = ['category', 'floor', 'room_number']
+        unique_together = [['category', 'floor', 'room_number']]
+
+    def __str__(self):
+        return f"{self.code} - {self.name}"
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            self.code = f"{self.category}-{self.floor}-{self.room_number}"
+        super().save(*args, **kwargs)
+
+    def get_full_description(self):
+        desc = [self.code, self.name]
+        if self.department:
+            desc.append(f"({self.department.code})")
+        if self.building:
+            desc.append(f"Сграда {self.building}")
+        return " - ".join(desc)
+
+
+class Technician(models.Model):
+    SPECIALIZATION_CHOICES = [
+        ('electrical', 'Електротехник'),
+        ('mechanical', 'Механик'),
+        ('it', 'IT специалист'),
+        ('metrology', 'Метролог'),
+        ('quality_control', 'Контрол на качеството'),
+        ('laboratory', 'Лаборант'),
+        ('hvac', 'Отопление/Климатици'),
+        ('safety', 'Пожарна безопасност'),
+        ('general', 'Общи проверки'),
+        ('other', 'Друго'),
+    ]
+
+    first_name = models.CharField(max_length=100, verbose_name="Име")
+    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
+    position = models.CharField(max_length=200, blank=True, verbose_name="Длъжност")
+    specialization = models.CharField(max_length=50, choices=SPECIALIZATION_CHOICES,
+                                     default='general', verbose_name="Специализация")
+
+    phone = models.CharField(max_length=20, blank=True, verbose_name="Телефон")
+    email = models.EmailField(blank=True, verbose_name="Email")
+
+    department = models.ForeignKey(Department, on_delete=models.SET_NULL,
+                                  null=True, blank=True,
+                                  related_name='technicians',
+                                  verbose_name="Звено")
+    company = models.CharField(max_length=200, blank=True, verbose_name="Външна фирма",
+                              help_text="Попълва се само ако е от външна фирма")
+
+    certification = models.TextField(blank=True, verbose_name="Сертификати/Квалификации")
+    certification_expiry = models.DateField(null=True, blank=True,
+                                           verbose_name="Валидност на сертификат до")
+
+    notes = models.TextField(blank=True, verbose_name="Забележки")
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Техник"
+        verbose_name_plural = "Техници"
+        ordering = ['last_name', 'first_name']
+
+    def __str__(self):
+        name = f"{self.first_name} {self.last_name}"
+        if self.position:
+            name += f" - {self.position}"
+        if self.department:
+            name += f" ({self.department.code})"
+        elif self.company:
+            name += f" ({self.company})"
+        return name
+
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}"
 

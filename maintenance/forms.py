@@ -36,7 +36,7 @@ class MaintenanceRecordForm(forms.ModelForm):
         model = MaintenanceRecord
         fields = [
             'equipment', 'maintenance_type', 'performed_date',
-            'next_due_date', 'performed_by', 'certificate_number',
+            'next_due_date', 'technician', 'certificate_number',
             'result', 'work_performed', 'parts_used', 'cost', 'currency', 'notes'
         ]
         widgets = {
@@ -51,10 +51,7 @@ class MaintenanceRecordForm(forms.ModelForm):
                 'type': 'date',
                 'readonly': 'readonly'
             }),
-            'performed_by': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Отдел (Метрология/QC) или име'
-            }),
+            'technician': forms.Select(attrs={'class': 'form-select'}),
             'certificate_number': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Номер на сертификат/протокол'
@@ -87,7 +84,7 @@ class MaintenanceRecordForm(forms.ModelForm):
             'maintenance_type': 'Тип поддръжка',
             'performed_date': 'Дата на изпълнение',
             'next_due_date': 'Следваща дата',
-            'performed_by': 'Изпълнено от',
+            'technician': 'Техник/Изпълнител',
             'certificate_number': 'Номер на сертификат',
             'result': 'Резултат',
             'work_performed': 'Извършена работа',
@@ -99,11 +96,11 @@ class MaintenanceRecordForm(forms.ModelForm):
         help_texts = {
             'performed_date': 'Въведете датата на изпълнение',
             'next_due_date': 'Автоматично изчислена въз основа на периода (само за четене)',
+            'technician': 'Изберете техник от списъка',
             'parts_used': 'Незадължително - списък с части или материали'
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Make next_due_date field not required - it will be auto-calculated
         self.fields['next_due_date'].required = False
         self.fields['parts_used'].required = False

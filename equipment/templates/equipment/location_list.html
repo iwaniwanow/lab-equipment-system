@@ -1,0 +1,60 @@
+{% extends 'equipment/base.html' %}
+{% block title %}Локации{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-geo-alt"></i> Локации</h1>
+    <a href="{% url 'location_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Добави локация
+    </a>
+</div>
+
+{% if locations %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Код</th>
+                    <th>Име</th>
+                    <th>Звено</th>
+                    <th>Категория</th>
+                    <th>Етаж</th>
+                    <th>Оборудване</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loc in locations %}
+                <tr>
+                    <td><strong>{{ loc.code }}</strong></td>
+                    <td>{{ loc.name }}</td>
+                    <td>
+                        {% if loc.department %}
+                            <span class="badge bg-info">{{ loc.department.code }}</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td><span class="badge bg-primary">{{ loc.get_category_display }}</span></td>
+                    <td>{{ loc.floor }}</td>
+                    <td><span class="badge bg-secondary">{{ loc.equipment.count }}</span></td>
+                    <td>
+                        <a href="{% url 'location_detail' loc.pk %}" class="btn btn-sm btn-info">
+                            <i class="bi bi-eye"></i> Преглед
+                        </a>
+                        <a href="{% url 'location_update' loc.pk %}" class="btn btn-sm btn-warning">
+                            <i class="bi bi-pencil"></i> Редактирай
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Няма намерени локации.
+        <a href="{% url 'location_create' %}">Добавете първата локация</a>.
+    </div>
+{% endif %}
+{% endblock %}
+

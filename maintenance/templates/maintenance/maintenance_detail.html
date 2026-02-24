@@ -59,8 +59,24 @@
                         <td>{{ maintenance.next_due_date|default:"Няма данни" }}</td>
                     </tr>
                     <tr>
-                        <th>Изпълнено от:</th>
-                        <td>{{ maintenance.performed_by }}</td>
+                        <th>Техник/Изпълнител:</th>
+                        <td>
+                            {% if maintenance.technician %}
+                                <a href="{% url 'technician_detail' maintenance.technician.pk %}">
+                                    {{ maintenance.technician.get_full_name }}
+                                </a>
+                                {% if maintenance.technician.position %}
+                                    <br><small class="text-muted">{{ maintenance.technician.position }}</small>
+                                {% endif %}
+                                {% if maintenance.technician.department %}
+                                    <br><small class="text-muted">{{ maintenance.technician.department.code }} - {{ maintenance.technician.department.name }}</small>
+                                {% elif maintenance.technician.company %}
+                                    <br><small class="text-muted">{{ maintenance.technician.company }}</small>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-muted">Не е посочен</span>
+                            {% endif %}
+                        </td>
                     </tr>
                     {% if maintenance.certificate_number %}
                     <tr>

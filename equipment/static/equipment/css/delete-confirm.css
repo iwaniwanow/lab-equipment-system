@@ -1,0 +1,171 @@
+
+.delete-modal {
+    max-width: 480px;
+    margin: 2.5rem auto;
+}
+
+.delete-card {
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+    overflow: hidden;
+    animation: slideIn 0.3s ease-out;
+    background: white !important;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.delete-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    padding: 2rem 1.5rem !important;
+    text-align: center;
+    position: relative;
+}
+
+.delete-header::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: white;
+    border-radius: 2px;
+    opacity: 0.3;
+}
+
+.delete-icon {
+    font-size: 3.5rem !important;
+    animation: shake 3s infinite ease-in-out;
+    display: inline-block;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+@keyframes shake {
+    0%, 100% { transform: rotate(0deg); }
+    10%, 30%, 50%, 70%, 90% { transform: rotate(-5deg); }
+    20%, 40%, 60%, 80% { transform: rotate(5deg); }
+}
+
+.delete-header h4 {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    margin: 0.75rem 0 0 0 !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.delete-card .card-body {
+    padding: 1.75rem !important;
+    background: #fafbfc !important;
+}
+
+.delete-card .lead {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #2d3748 !important;
+    margin-bottom: 1.25rem !important;
+}
+
+.warning-box {
+    background: linear-gradient(135deg, #fff3cd 0%, #fff8e1 100%) !important;
+    border-left: 4px solid #ffc107 !important;
+    border-radius: 10px !important;
+    padding: 1.25rem !important;
+    margin: 1.25rem 0 !important;
+    box-shadow: 0 3px 12px rgba(255, 193, 7, 0.2) !important;
+}
+
+.warning-box i {
+    color: #f59e0b !important;
+    filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.3));
+}
+
+.warning-box strong {
+    color: #1f2937 !important;
+    font-size: 1rem !important;
+}
+
+.warning-box small {
+    color: #6b7280 !important;
+    font-size: 0.875rem !important;
+}
+
+.danger-box {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important;
+    border-left: 4px solid #ef4444 !important;
+    border-radius: 10px !important;
+    padding: 1.25rem !important;
+    margin: 1.25rem 0 !important;
+    box-shadow: 0 3px 12px rgba(239, 68, 68, 0.2) !important;
+}
+
+.danger-box i {
+    color: #dc2626 !important;
+    filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.3));
+}
+
+.danger-box strong {
+    font-size: 1rem !important;
+    color: #991b1b !important;
+}
+
+.danger-box p {
+    font-size: 0.9rem !important;
+    color: #7f1d1d !important;
+}
+
+.danger-box ul {
+    font-size: 0.9rem !important;
+    color: #7f1d1d !important;
+    padding-left: 1.5rem;
+}
+
+.btn-cancel {
+    background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%) !important;
+    border: 1px solid #d1d5db !important;
+    padding: 10px 24px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    color: #374151 !important;
+}
+
+.btn-cancel:hover {
+    background: linear-gradient(135deg, #d1d5db 0%, #e5e7eb 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+    color: #1f2937 !important;
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    border: 1px solid #dc2626 !important;
+    padding: 10px 24px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3) !important;
+    color: white !important;
+}
+
+.btn-delete:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4) !important;
+    color: white !important;
+}
+
+.btn-delete i, .btn-cancel i {
+    margin-right: 0.25rem;
+}
+
+

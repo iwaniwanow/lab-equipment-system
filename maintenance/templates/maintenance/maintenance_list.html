@@ -85,7 +85,18 @@
                 </td>
                 <td>{{ record.performed_date }}</td>
                 <td>{{ record.next_due_date }}</td>
-                <td>{{ record.performed_by }}</td>
+                <td>
+                    {% if record.technician %}
+                        {{ record.technician.get_full_name }}
+                        {% if record.technician.department %}
+                            <br><small class="text-muted">{{ record.technician.department.code }}</small>
+                        {% elif record.technician.company %}
+                            <br><small class="text-muted">{{ record.technician.company }}</small>
+                        {% endif %}
+                    {% else %}
+                        <span class="text-muted">-</span>
+                    {% endif %}
+                </td>
                 <td>
                     {% if record.cost %}
                         {{ record.cost }} {{ record.get_currency_display }}

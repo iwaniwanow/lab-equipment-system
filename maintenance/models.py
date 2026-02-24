@@ -69,9 +69,19 @@ class MaintenanceRecord(models.Model):
         null=True,
         help_text="Следваща дата (автоматично изчислена от дата + период)"
     )
+    technician = models.ForeignKey(
+        'equipment.Technician',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='maintenance_records',
+        verbose_name="Техник/Изпълнител",
+        help_text="Техник извършил поддръжката"
+    )
     performed_by = models.CharField(
         max_length=200,
-        help_text="Изпълнено от (отдел или име: Метрология/QC)"
+        blank=True,
+        help_text="Изпълнено от (старо поле за справка)"
     )
     certificate_number = models.CharField(
         max_length=100,
@@ -128,6 +138,5 @@ class MaintenanceRecord(models.Model):
         if not self.next_due_date and self.performed_date and self.maintenance_type:
             self.next_due_date = self.performed_date + relativedelta(months=self.maintenance_type.period_months)
         super().save(*args, **kwargs)
-        # Актуализира статуса на оборудването след записване
         self.equipment.update_status()
 

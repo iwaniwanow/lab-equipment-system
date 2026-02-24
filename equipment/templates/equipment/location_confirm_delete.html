@@ -1,7 +1,8 @@
-﻿{% extends 'equipment/base.html' %}
+{% extends 'equipment/base.html' %}
 {% load static %}
-{% block title %}Изтриване на производител - {{ manufacturer.name }}{% endblock %}
+{% block title %}Изтриване на локация - {{ location.code }}{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{% static 'equipment/css/delete-confirm.css' %}">{% endblock %}
+
 {% block content %}
 <div class="delete-modal">
     <div class="card delete-card">
@@ -10,31 +11,25 @@
             <h4 class="mt-2">Потвърждение за изтриване</h4>
         </div>
         <div class="card-body">
-            <p class="lead text-center mb-3">Сигурни ли сте, че искате да изтриете този производител?</p>
+            <p class="lead text-center mb-3">Сигурни ли сте, че искате да изтриете тази локация?</p>
             <div class="warning-box">
                 <div class="d-flex align-items-center">
-                    <i class="bi bi-building-fill" style="font-size: 2rem; margin-right: 1rem;"></i>
-                    <div>
-                        <strong>{{ manufacturer.name }}</strong>
-                        {% if manufacturer.country %}<small>{{ manufacturer.country }}</small>{% endif %}
-                    </div>
+                    <i class="bi bi-geo-alt-fill" style="font-size: 2rem; margin-right: 1rem;"></i>
+                    <div><strong>{{ location.code }} - {{ location.name }}</strong>{% if location.department %}<small>{{ location.department.code }}</small>{% endif %}</div>
                 </div>
             </div>
-            {% if manufacturer.equipment.count > 0 %}
+            {% if location.equipment.count > 0 %}
                 <div class="danger-box">
                     <div class="d-flex align-items-start">
                         <i class="bi bi-exclamation-circle-fill" style="font-size: 1.5rem; margin-right: 0.75rem;"></i>
-                        <div>
-                            <strong>Внимание!</strong>
-                            <p class="mb-0 mt-1">Този производител има <strong>{{ manufacturer.equipment.count }} оборудване</strong>.</p>
-                        </div>
+                        <div><strong>Внимание!</strong><p class="mb-0 mt-1">Тази локация има <strong>{{ location.equipment.count }} оборудване</strong>.</p></div>
                     </div>
                 </div>
             {% endif %}
             <form method="post">
                 {% csrf_token %}
                 <div class="d-flex justify-content-between gap-2 mt-3">
-                    <a href="{% url 'manufacturer_detail' manufacturer.pk %}" class="btn btn-cancel flex-fill"><i class="bi bi-arrow-left"></i> Откажи</a>
+                    <a href="{% url 'location_detail' location.pk %}" class="btn btn-cancel flex-fill"><i class="bi bi-arrow-left"></i> Откажи</a>
                     <button type="submit" class="btn btn-delete flex-fill"><i class="bi bi-trash-fill"></i> Изтрий</button>
                 </div>
             </form>

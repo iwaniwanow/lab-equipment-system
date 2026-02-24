@@ -2,14 +2,12 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Inspection URLs
     path('inspections/', views.inspection_list, name='inspection_list'),
     path('inspections/<int:pk>/', views.inspection_detail, name='inspection_detail'),
     path('inspections/create/', views.inspection_create, name='inspection_create'),
     path('inspections/<int:pk>/update/', views.inspection_update, name='inspection_update'),
     path('inspections/<int:pk>/delete/', views.inspection_delete, name='inspection_delete'),
 
-    # Inspection Type URLs
     path('inspection-types/', views.inspection_type_list, name='inspection_type_list'),
     path('inspection-types/<int:pk>/', views.inspection_type_detail, name='inspection_type_detail'),
     path('inspection-types/create/', views.inspection_type_create, name='inspection_type_create'),
