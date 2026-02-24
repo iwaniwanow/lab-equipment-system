@@ -1,0 +1,681 @@
+[
+  {
+    "model": "equipment.manufacturer",
+    "pk": 1,
+    "fields": {
+      "name": "Mettler Toledo",
+      "country": "Switzerland",
+      "website": "https://www.mt.com",
+      "contact_info": "Global leader in precision instruments. Contact: +41 44 944 22 11"
+    }
+  },
+  {
+    "model": "equipment.manufacturer",
+    "pk": 2,
+    "fields": {
+      "name": "Sartorius",
+      "country": "Germany",
+      "website": "https://www.sartorius.com",
+      "contact_info": "Precision balances and laboratory equipment. Contact: +49 551 308 0"
+    }
+  },
+  {
+    "model": "equipment.manufacturer",
+    "pk": 3,
+    "fields": {
+      "name": "Thermo Fisher Scientific",
+      "country": "USA",
+      "website": "https://www.thermofisher.com",
+      "contact_info": "Scientific instruments and consumables. Contact: +1 800 678 5599"
+    }
+  },
+  {
+    "model": "equipment.manufacturer",
+    "pk": 4,
+    "fields": {
+      "name": "Agilent Technologies",
+      "country": "USA",
+      "website": "https://www.agilent.com",
+      "contact_info": "Analytical laboratory instruments. Contact: +1 800 227 9770"
+    }
+  },
+  {
+    "model": "equipment.manufacturer",
+    "pk": 5,
+    "fields": {
+      "name": "Waters Corporation",
+      "country": "USA",
+      "website": "https://www.waters.com",
+      "contact_info": "HPLC and mass spectrometry systems. Contact: +1 508 478 2000"
+    }
+  },
+  {
+    "model": "equipment.equipmentcategory",
+    "pk": 1,
+    "fields": {
+      "name": "Аналитична везна",
+      "description": "Прецизни везни за измерване с точност до 0.0001g"
+    }
+  },
+  {
+    "model": "equipment.equipmentcategory",
+    "pk": 2,
+    "fields": {
+      "name": "pH метър",
+      "description": "Уреди за измерване на pH стойност на разтвори"
+    }
+  },
+  {
+    "model": "equipment.equipmentcategory",
+    "pk": 3,
+    "fields": {
+      "name": "Спектрофотометър UV/VIS",
+      "description": "Оптични анализатори за UV и видима светлина"
+    }
+  },
+  {
+    "model": "equipment.equipmentcategory",
+    "pk": 4,
+    "fields": {
+      "name": "HPLC система",
+      "description": "Високоефективна течна хроматография"
+    }
+  },
+  {
+    "model": "equipment.equipmentcategory",
+    "pk": 5,
+    "fields": {
+      "name": "Центрофуга",
+      "description": "Лабораторни центрофуги за разделяне на проби"
+    }
+  },
+  {
+    "model": "equipment.equipmentcategory",
+    "pk": 6,
+    "fields": {
+      "name": "Автоклав",
+      "description": "Стерилизатори с водна пара под налягане"
+    }
+  },
+  {
+    "model": "equipment.equipmentcategory",
+    "pk": 7,
+    "fields": {
+      "name": "Термостат",
+      "description": "Инкубатори с контролирана температура"
+    }
+  },
+  {
+    "model": "equipment.department",
+    "pk": 1,
+    "fields": {
+      "code": "QC",
+      "name": "Контрол на качеството",
+      "full_name": "Отдел Контрол на качеството - Аналитична лаборатория",
+      "manager": "Д-р Елена Димитрова",
+      "contact": "ext. 2301, qc@lab.bg",
+      "is_active": true
+    }
+  },
+  {
+    "model": "equipment.department",
+    "pk": 2,
+    "fields": {
+      "code": "RD",
+      "name": "Научноизследователски отдел",
+      "full_name": "Отдел Научни изследвания и развойна дейност",
+      "manager": "Проф. Иван Петров",
+      "contact": "ext. 2401, rd@lab.bg",
+      "is_active": true
+    }
+  },
+  {
+    "model": "equipment.department",
+    "pk": 3,
+    "fields": {
+      "code": "PROD",
+      "name": "Производство",
+      "full_name": "Производствен отдел - Чисти помещения",
+      "manager": "Инж. Мария Георгиева",
+      "contact": "ext. 2501, prod@lab.bg",
+      "is_active": true
+    }
+  },
+  {
+    "model": "equipment.location",
+    "pk": 1,
+    "fields": {
+      "code": "A-1-101",
+      "category": "A",
+      "floor": 1,
+      "room_number": "101",
+      "name": "Лаборатория за микробиологичен контрол",
+      "department": 1,
+      "building": "Главна сграда",
+      "area_sqm": "45.50",
+      "responsible_person": "Д-р Елена Димитрова",
+      "phone": "ext. 2301",
+      "notes": "Клас А - асептични операции",
+      "has_controlled_temperature": true,
+      "has_controlled_humidity": true,
+      "is_active": true
+    }
+  },
+  {
+    "model": "equipment.location",
+    "pk": 2,
+    "fields": {
+      "code": "B-2-205",
+      "category": "B",
+      "floor": 2,
+      "room_number": "205",
+      "name": "Аналитична лаборатория ККП",
+      "department": 1,
+      "building": "Главна сграда",
+      "area_sqm": "68.20",
+      "responsible_person": "Д-р Елена Димитрова",
+      "phone": "ext. 2302",
+      "notes": "Клас B - подготовка и разфасовка",
+      "has_controlled_temperature": true,
+      "has_controlled_humidity": true,
+      "is_active": true
+    }
+  },
+  {
+    "model": "equipment.location",
+    "pk": 3,
+    "fields": {
+      "code": "C-1-103",
+      "category": "C",
+      "floor": 1,
+      "room_number": "103",
+      "name": "HPLC лаборатория",
+      "department": 1,
+      "building": "Главна сграда",
+      "area_sqm": "35.80",
+      "responsible_person": "Маг.фарм. Иванка Стоянова",
+      "phone": "ext. 2305",
+      "notes": "Клас C - производство на нестерилни лекарства",
+      "has_controlled_temperature": true,
+      "has_controlled_humidity": false,
+      "is_active": true
+    }
+  },
+  {
+    "model": "equipment.location",
+    "pk": 4,
+    "fields": {
+      "code": "D-2-220",
+      "category": "D",
+      "floor": 2,
+      "room_number": "220",
+      "name": "Лаборатория за физикохимични изследвания",
+      "department": 2,
+      "building": "Изследователски корпус",
+      "area_sqm": "52.30",
+      "responsible_person": "Проф. Иван Петров",
+      "phone": "ext. 2401",
+      "notes": "Клас D - общи производствени помещения",
+      "has_controlled_temperature": true,
+      "has_controlled_humidity": false,
+      "is_active": true
+    }
+  },
+  {
+    "model": "equipment.location",
+    "pk": 5,
+    "fields": {
+      "code": "E-1-150",
+      "category": "E",
+      "floor": 1,
+      "room_number": "150",
+      "name": "Помощна лаборатория",
+      "department": 3,
+      "building": "Производствена сграда",
+      "area_sqm": "28.50",
+      "responsible_person": "Инж. Мария Георгиева",
+      "phone": "ext. 2501",
+      "notes": "Клас E - непроизводствени зони",
+      "has_controlled_temperature": false,
+      "has_controlled_humidity": false,
+      "is_active": true
+    }
+  },
+  {
+    "model": "equipment.technician",
+    "pk": 1,
+    "fields": {
+      "first_name": "Георги",
+      "last_name": "Николов",
+      "position": "Старши метролог",
+      "specialization": "metrology",
+      "phone": "+359 888 123 456",
+      "email": "g.nikolov@lab.bg",
+      "department": 1,
+      "company": "",
+      "certification": "Сертифициран метролог (БСА), ISO 17025 Lead Auditor",
+      "certification_expiry": "2027-12-31",
+      "notes": "Отговорен за всички калибровки на везни и pH метри",
+      "is_active": true
+    }
+  },
+  {
+    "model": "equipment.technician",
+    "pk": 2,
+    "fields": {
+      "first_name": "Петя",
+      "last_name": "Иванова",
+      "position": "Лаборант",
+      "specialization": "quality_control",
+      "phone": "+359 888 234 567",
+      "email": "p.ivanova@lab.bg",
+      "department": 1,
+      "company": "",
+      "certification": "Лаборант категория 3, GMP сертификат",
+      "certification_expiry": "2026-06-30",
+      "notes": "Извършва ежедневни проверки на оборудването",
+      "is_active": true
+    }
+  },
+  {
+    "model": "equipment.technician",
+    "pk": 3,
+    "fields": {
+      "first_name": "Стефан",
+      "last_name": "Маринов",
+      "position": "Сервизен инженер",
+      "specialization": "electrical",
+      "phone": "+359 888 345 678",
+      "email": "s.marinov@metroservice.bg",
+      "department": null,
+      "company": "МетроСервиз ЕООД",
+      "certification": "Оторизиран сервиз Mettler Toledo, Sartorius",
+      "certification_expiry": "2026-12-31",
+      "notes": "Външна фирма за калибровки и ремонти",
+      "is_active": true
+    }
+  },
+  {
+    "model": "equipment.technician",
+    "pk": 4,
+    "fields": {
+      "first_name": "Димитър",
+      "last_name": "Георгиев",
+      "position": "IT специалист",
+      "specialization": "it",
+      "phone": "+359 888 456 789",
+      "email": "d.georgiev@lab.bg",
+      "department": 2,
+      "company": "",
+      "certification": "HPLC Software Specialist, Waters Empower certified",
+      "certification_expiry": "2027-03-31",
+      "notes": "Отговорен за софтуера на аналитичните системи",
+      "is_active": true
+    }
+  },
+  {
+    "model": "maintenance.maintenancetype",
+    "pk": 1,
+    "fields": {
+      "name": "Годишна калибровка",
+      "type": "calibration",
+      "period_months": 12,
+      "description": "Калибровка на измервателни уреди с издаване на сертификат за калибровка от акредитирана лаборатория"
+    }
+  },
+  {
+    "model": "maintenance.maintenancetype",
+    "pk": 2,
+    "fields": {
+      "name": "Шестмесечна калибровка",
+      "type": "calibration",
+      "period_months": 6,
+      "description": "Междинна калибровка за критични везни и измервателни системи"
+    }
+  },
+  {
+    "model": "maintenance.maintenancetype",
+    "pk": 3,
+    "fields": {
+      "name": "OQ/PV Валидиране",
+      "type": "validation",
+      "period_months": 12,
+      "description": "Operational Qualification и Performance Validation съгласно GMP изисквания"
+    }
+  },
+  {
+    "model": "maintenance.maintenancetype",
+    "pk": 4,
+    "fields": {
+      "name": "Тримесечен технически преглед",
+      "type": "technical_service",
+      "period_months": 3,
+      "description": "Профилактична поддръжка, почистване, проверка на механични части"
+    }
+  },
+  {
+    "model": "maintenance.maintenancetype",
+    "pk": 5,
+    "fields": {
+      "name": "Ремонт и части",
+      "type": "repair",
+      "period_months": 12,
+      "description": "Коригираща поддръжка при повреди, смяна на изхабени части"
+    }
+  },
+  {
+    "model": "inspections.inspectiontype",
+    "pk": 1,
+    "fields": {
+      "name": "Дневна проверка за пригодност",
+      "category": "suitability_check",
+      "frequency": "daily",
+      "description": "Ежедневна проверка преди започване на работа",
+      "checklist": "1. Визуален преглед за повреди\n2. Проверка на дисплей\n3. Тест с референтна проба\n4. Проверка на чистота\n5. Запис в дневник"
+    }
+  },
+  {
+    "model": "inspections.inspectiontype",
+    "pk": 2,
+    "fields": {
+      "name": "Седмична проверка",
+      "category": "suitability_check",
+      "frequency": "weekly",
+      "description": "Седмична проверка на калибровъчни тестове",
+      "checklist": "1. Калибровъчен тест с 2-3 стандарта\n2. Проверка на температура на помещението\n3. Проверка на нивелиране\n4. Почистване на работна камера\n5. Архивиране на данни"
+    }
+  },
+  {
+    "model": "inspections.inspectiontype",
+    "pk": 3,
+    "fields": {
+      "name": "Месечна техническа проверка",
+      "category": "technical_review",
+      "frequency": "monthly",
+      "description": "Месечен технически преглед на състоянието",
+      "checklist": "1. Проверка на механични части\n2. Тест с референтни стандарти\n3. Проверка на връзки и кабели\n4. Почистване и дезинфекция\n5. Проверка на софтуер/firmware\n6. Документиране на резултати"
+    }
+  },
+  {
+    "model": "inspections.inspectiontype",
+    "pk": 4,
+    "fields": {
+      "name": "Тримесечна проверка",
+      "category": "suitability_check",
+      "frequency": "quarterly",
+      "description": "Тримесечна задълбочена проверка",
+      "checklist": "1. Проверка на всички функции\n2. Сравнение с референтно оборудване\n3. Проверка на протоколи и настройки\n4. Анализ на тенденции от ежедневни проверки\n5. Планиране на поддръжка"
+    }
+  },
+  {
+    "model": "equipment.equipment",
+    "pk": 1,
+    "fields": {
+      "asset_number": "BAL-001",
+      "name": "Аналитична везна XPE205",
+      "category": 1,
+      "manufacturer": 1,
+      "model": "XPE205",
+      "serial_number": "B405678123",
+      "location_old": "",
+      "location": 2,
+      "commissioning_date": "2023-03-15",
+      "requires_oq_pv": true,
+      "requires_calibration": true,
+      "requires_technical_review": false,
+      "check_interval_months": 1,
+      "status": "active",
+      "notes": "Везна с вътрешна калибровка. Капацитет: 220g, четливост: 0.01mg (0.00001g). Акредитирана за GMP анализи."
+    }
+  },
+  {
+    "model": "equipment.equipment",
+    "pk": 2,
+    "fields": {
+      "asset_number": "BAL-002",
+      "name": "Прецизна везна Cubis MSA",
+      "category": 1,
+      "manufacturer": 2,
+      "model": "MSA6202S-000-DA",
+      "serial_number": "29845612",
+      "location_old": "",
+      "location": 2,
+      "commissioning_date": "2024-01-20",
+      "requires_oq_pv": true,
+      "requires_calibration": true,
+      "requires_technical_review": false,
+      "check_interval_months": 1,
+      "status": "active",
+      "notes": "Модулна везна с автоматична калибровка. Капацитет: 6200g, четливост: 0.01g. Сертифицирана по OIML."
+    }
+  },
+  {
+    "model": "equipment.equipment",
+    "pk": 3,
+    "fields": {
+      "asset_number": "PH-001",
+      "name": "pH метър SevenCompact",
+      "category": 2,
+      "manufacturer": 1,
+      "model": "S220-K",
+      "serial_number": "B708901234",
+      "location_old": "",
+      "location": 2,
+      "commissioning_date": "2023-06-10",
+      "requires_oq_pv": false,
+      "requires_calibration": true,
+      "requires_technical_review": false,
+      "check_interval_months": 6,
+      "status": "active",
+      "notes": "Комбиниран pH/mV/температурен метър. Автоматично разпознаване на буфери. Обхват: pH 0-14, точност ±0.01 pH."
+    }
+  },
+  {
+    "model": "equipment.equipment",
+    "pk": 4,
+    "fields": {
+      "asset_number": "UV-001",
+      "name": "UV/VIS Спектрофотометър Evolution 201",
+      "category": 3,
+      "manufacturer": 3,
+      "model": "Evolution 201",
+      "serial_number": "AJE512304",
+      "location_old": "",
+      "location": 3,
+      "commissioning_date": "2022-11-05",
+      "requires_oq_pv": true,
+      "requires_calibration": true,
+      "requires_technical_review": true,
+      "check_interval_months": 3,
+      "status": "active",
+      "notes": "Двулъчев UV/VIS спектрофотометър. Спектрален обхват: 190-1100nm. Bandwidth: 1.5nm. С валидирана софтуерна система INSIGHT."
+    }
+  },
+  {
+    "model": "equipment.equipment",
+    "pk": 5,
+    "fields": {
+      "asset_number": "HPLC-001",
+      "name": "HPLC система Agilent 1260 Infinity II",
+      "category": 4,
+      "manufacturer": 4,
+      "model": "1260 Infinity II",
+      "serial_number": "DEAAW12345",
+      "location_old": "",
+      "location": 3,
+      "commissioning_date": "2024-02-12",
+      "requires_oq_pv": true,
+      "requires_calibration": true,
+      "requires_technical_review": true,
+      "check_interval_months": 3,
+      "status": "active",
+      "notes": "Модулна HPLC система с DAD детектор. OpenLab CDS софтуер. IQ/OQ/PV валидирана. Налягане до 600 bar."
+    }
+  },
+  {
+    "model": "maintenance.maintenancerecord",
+    "pk": 1,
+    "fields": {
+      "equipment": 1,
+      "maintenance_type": 1,
+      "performed_date": "2025-03-20",
+      "next_due_date": "2026-03-20",
+      "technician": 3,
+      "performed_by": "",
+      "certificate_number": "CAL-2025-001234",
+      "result": "passed",
+      "work_performed": "Извършена външна калибровка с референтни гири клас E2 (акредитирана). Проверени всички диапазони. Изпитана линейност, повторяемост, ексцентрисност. Всички параметри в спецификация.",
+      "parts_used": "",
+      "cost": "350.00",
+      "currency": "BGN",
+      "notes": "Сертификат валиден 12 месеца. Следваща калибровка: март 2026."
+    }
+  },
+  {
+    "model": "maintenance.maintenancerecord",
+    "pk": 2,
+    "fields": {
+      "equipment": 2,
+      "maintenance_type": 1,
+      "performed_date": "2025-01-25",
+      "next_due_date": "2026-01-25",
+      "technician": 3,
+      "performed_by": "",
+      "certificate_number": "CAL-2025-000234",
+      "result": "passed",
+      "work_performed": "Акредитирана калибровка с гири клас F1. Проверка на автоматична калибровка. Тест на линейност с 10 точки. Всички резултати в спецификация на производителя.",
+      "parts_used": "",
+      "cost": "420.00",
+      "currency": "BGN",
+      "notes": "Включва софтуерна проверка и документация за 21 CFR Part 11."
+    }
+  },
+  {
+    "model": "maintenance.maintenancerecord",
+    "pk": 3,
+    "fields": {
+      "equipment": 3,
+      "maintenance_type": 2,
+      "performed_date": "2025-06-15",
+      "next_due_date": "2025-12-15",
+      "technician": 1,
+      "performed_by": "",
+      "certificate_number": "CAL-2025-000567",
+      "result": "passed",
+      "work_performed": "Калибровка на pH измерванията с 3 буфера (pH 4.01, 7.00, 10.01). Проверка на електроден отговор. Калибровка на температурния сензор. Проверка на mV функцията.",
+      "parts_used": "Калибровъчни буфери, промивна течност",
+      "cost": "180.00",
+      "currency": "BGN",
+      "notes": "Препоръчва се смяна на електрода след 6 месеца (декември 2025)."
+    }
+  },
+  {
+    "model": "maintenance.maintenancerecord",
+    "pk": 4,
+    "fields": {
+      "equipment": 4,
+      "maintenance_type": 3,
+      "performed_date": "2024-11-10",
+      "next_due_date": "2025-11-10",
+      "technician": 4,
+      "performed_by": "",
+      "certificate_number": "OQ-2024-UV001",
+      "result": "passed",
+      "work_performed": "OQ/PV валидиране съгласно USP и Ph.Eur. Проверка на дължини на вълните (Holmium oxide filter). Stray light test. Baseline flatness. Photometric accuracy. Resolution test. Всички спецификации изпълнени.",
+      "parts_used": "Validation kit (Holmium oxide, Potassium dichromate, KCl, NaI, NaNO2)",
+      "cost": "680.00",
+      "currency": "EUR",
+      "notes": "Годишна реваlidация. Следваща валидация: ноември 2025. Софтуер валидиран."
+    }
+  },
+  {
+    "model": "maintenance.maintenancerecord",
+    "pk": 5,
+    "fields": {
+      "equipment": 5,
+      "maintenance_type": 3,
+      "performed_date": "2025-02-15",
+      "next_due_date": "2026-02-15",
+      "technician": 4,
+      "performed_by": "",
+      "certificate_number": "OQ-2025-HPLC001",
+      "result": "passed",
+      "work_performed": "IQ/OQ/PV протокол за HPLC система. Проверка на: flow accuracy, gradient accuracy, injection precision, wavelength accuracy, detector linearity. System suitability test с тестова проба (Caffeine). OpenLab CDS софтуер валидиран по 21 CFR Part 11.",
+      "parts_used": "HPLC column qualification mix, system suitability test mix",
+      "cost": "1250.00",
+      "currency": "EUR",
+      "notes": "Пълна IQ/OQ/PV документация. Audit trail активиран. Следваща валидация: февруари 2026."
+    }
+  },
+  {
+    "model": "inspections.inspection",
+    "pk": 1,
+    "fields": {
+      "equipment": 1,
+      "inspection_type": 1,
+      "inspection_date": "2026-02-24",
+      "next_inspection_date": "2026-02-25",
+      "status": "passed",
+      "technician": 2,
+      "findings": "Везната е в отлично състояние. Визуален преглед - без повреди. Дисплей работи нормално. Извършен тест с референтна гиря 200g - отчетена маса 200.00g (спецификация ±0.1g). Работна камера чиста.",
+      "corrective_actions": ""
+    }
+  },
+  {
+    "model": "inspections.inspection",
+    "pk": 2,
+    "fields": {
+      "equipment": 2,
+      "inspection_type": 1,
+      "inspection_date": "2026-02-24",
+      "next_inspection_date": "2026-02-25",
+      "status": "passed",
+      "technician": 2,
+      "findings": "Везна Cubis в добро работно състояние. Автоматична калибровка изпълнена успешно. Тест с 5000g гиря - резултат 5000.01g (в спецификация). Нивелиране проверено - OK. Дисплей и софтуер работят коректно.",
+      "corrective_actions": ""
+    }
+  },
+  {
+    "model": "inspections.inspection",
+    "pk": 3,
+    "fields": {
+      "equipment": 3,
+      "inspection_type": 2,
+      "inspection_date": "2026-02-17",
+      "next_inspection_date": "2026-02-24",
+      "status": "passed",
+      "technician": 2,
+      "findings": "Седмична калибровъчна проверка с 3 буфера (pH 4.01, 7.00, 10.01). Резултати: 4.00, 7.01, 10.00 - всички в допустими граници (±0.02 pH). Slope 98.2% (норма >95%). Температурна компенсация работи коректно при 25°C.",
+      "corrective_actions": ""
+    }
+  },
+  {
+    "model": "inspections.inspection",
+    "pk": 4,
+    "fields": {
+      "equipment": 4,
+      "inspection_type": 3,
+      "inspection_date": "2026-02-01",
+      "next_inspection_date": "2026-03-01",
+      "status": "passed",
+      "technician": 2,
+      "findings": "Месечна проверка на UV/VIS спектрофотометър. Baseline проверка при 200-800nm - flat, noise <0.0005 AU. Wavelength accuracy test с Holmium oxide филтър - всички пикове на позиции (241.15, 361.50, 536.30nm) ±0.2nm. Photometric accuracy при 0.5 AU - 0.501 AU (спецификация ±1%).",
+      "corrective_actions": ""
+    }
+  },
+  {
+    "model": "inspections.inspection",
+    "pk": 5,
+    "fields": {
+      "equipment": 5,
+      "inspection_type": 3,
+      "inspection_date": "2026-02-01",
+      "next_inspection_date": "2026-03-01",
+      "status": "passed",
+      "technician": 4,
+      "findings": "Месечна system suitability проверка на HPLC. Test mix: Caffeine analysis. Flow rate accuracy: 1.000 ml/min (target), measured 1.002 ml/min (в спецификация ±2%). Retention time RSD: 0.08% (спецификация <1%). Peak area RSD: 0.15% (спецификация <2%). Pressure stable при 125 bar. Detector response linear R²=0.9998.",
+      "corrective_actions": ""
+    }
+  }
+]
+
