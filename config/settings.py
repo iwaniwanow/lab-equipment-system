@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Local apps
+    'users',
     'equipment',
     'inspections',
     'maintenance',
@@ -126,5 +128,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Media files (user uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Custom User Model
+AUTH_USER_MODEL = 'users.CustomUser'
+
+# Login/Logout URLs
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'equipment:dashboard'
+LOGOUT_REDIRECT_URL = 'users:login'
+
