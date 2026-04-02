@@ -275,11 +275,14 @@ class TechnicianForm(forms.ModelForm):
     class Meta:
         model = Technician
         fields = [
-            'first_name', 'last_name', 'position', 'specialization',
+            'user', 'first_name', 'last_name', 'position', 'specialization',
             'phone', 'email', 'department', 'company',
             'certification', 'certification_expiry', 'notes', 'is_active'
         ]
         widgets = {
+            'user': forms.Select(attrs={
+                'class': 'form-select',
+            }),
             'first_name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Име'
@@ -325,6 +328,7 @@ class TechnicianForm(forms.ModelForm):
             }),
         }
         labels = {
+            'user': 'Свързан потребител',
             'first_name': 'Име',
             'last_name': 'Фамилия',
             'position': 'Длъжност',
@@ -338,3 +342,27 @@ class TechnicianForm(forms.ModelForm):
             'notes': 'Забележки',
             'is_active': 'Активен'
         }
+        help_texts = {
+            'user': 'Изберете потребител от системата (само за вътрешни техници). За външни техници оставете празно.',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Показване само на потребители с роля "technician" които нямат Technician профил
+        from django.contrib.auth.models import User
+
+        # Филтриране на потребители
+        technician_users = User.objects.filter(
+            profile__role='technician',
+            profile__is_approved=True
+        )
+
+        # Ако редактираме съществуващ техник, включи текущия потребител
+        if self.instance.pk and self.instance.user:
+            technician_users = technician_users | User.objects.filter(pk=self.instance.user.pk)
+        else:
+            # Изключи потребители, които вече имат Technician профил
+            technician_users = technician_users.exclude(technician_profile__isnull=False)
+
+        self.fields['user'].queryset = technician_users
+        self.fields['user'].empty_label = "--- Без потребител (външен техник) ---"

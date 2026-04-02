@@ -1,4 +1,4 @@
-{% extends 'equipment/base.html' %}
+﻿{% extends 'equipment/base.html' %}
 
 {% block title %}Списък проверки - Лабораторно Оборудване{% endblock %}
 
@@ -8,7 +8,7 @@
         <h1 class="display-4">Списък проверки</h1>
     </div>
     <div class="col-auto">
-        <a href="{% url 'inspection_create' %}" class="btn btn-primary">
+        <a href="{% url 'inspections:inspection_create' %}" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Добави проверка
         </a>
     </div>
@@ -42,7 +42,7 @@
                 <button type="submit" class="btn btn-primary me-2">
                     <i class="bi bi-funnel"></i> Филтрирай
                 </button>
-                <a href="{% url 'inspection_list' %}" class="btn btn-secondary">
+                <a href="{% url 'inspections:inspection_list' %}" class="btn btn-secondary">
                     <i class="bi bi-x-circle"></i> Изчисти
                 </a>
             </div>
@@ -93,13 +93,13 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'inspection_detail' inspection.pk %}" class="btn btn-sm btn-info">
+                    <a href="{% url 'inspections:inspection_detail' inspection.pk %}" class="btn btn-sm btn-info">
                         <i class="bi bi-eye"></i> Преглед
                     </a>
-                    <a href="{% url 'inspection_update' inspection.pk %}" class="btn btn-sm btn-warning">
+                    <a href="{% url 'inspections:inspection_update' inspection.pk %}" class="btn btn-sm btn-warning">
                         <i class="bi bi-pencil"></i> Редактирай
                     </a>
-                    <a href="{% url 'inspection_delete' inspection.pk %}" class="btn btn-sm btn-danger">
+                    <a href="{% url 'inspections:inspection_delete' inspection.pk %}" class="btn btn-sm btn-danger">
                         <i class="bi bi-trash"></i> Изтрий
                     </a>
                 </td>

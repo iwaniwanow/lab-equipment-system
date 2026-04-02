@@ -1,11 +1,14 @@
 {% extends 'equipment/base.html' %}
+{% load permission_tags %}
 {% block title %}Техници{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><i class="bi bi-person-badge"></i> Техници и изпълнители</h1>
-    <a href="{% url 'technician_create' %}" class="btn btn-primary">
+    {% if user|can_modify_data %}
+    <a href="{% url 'equipment:technician_create' %}" class="btn btn-primary">
         <i class="bi bi-plus-circle"></i> Добави техник
     </a>
+    {% endif %}
 </div>
 
 {% if technicians %}
@@ -14,10 +17,12 @@
             <thead class="table-dark">
                 <tr>
                     <th>Име</th>
+                    <th>Потребител</th>
                     <th>Длъжност</th>
                     <th>Специализация</th>
                     <th>Звено/Фирма</th>
                     <th>Контакти</th>
+                    <th>Статус</th>
                     <th>Действия</th>
                 </tr>
             </thead>
@@ -25,6 +30,17 @@
                 {% for tech in technicians %}
                 <tr>
                     <td><strong>{{ tech.get_full_name }}</strong></td>
+                    <td>
+                        {% if tech.user %}
+                            <span class="badge bg-success" title="Свързан с потребител">
+                                <i class="bi bi-person-check"></i> {{ tech.user.username }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary" title="Без потребителски акаунт">
+                                <i class="bi bi-person-x"></i> Външен
+                            </span>
+                        {% endif %}
+                    </td>
                     <td>{{ tech.position|default:"-" }}</td>
                     <td><span class="badge bg-info">{{ tech.get_specialization_display }}</span></td>
                     <td>
@@ -41,10 +57,17 @@
                         {% if tech.email %}<small>{{ tech.email }}</small>{% endif %}
                     </td>
                     <td>
-                        <a href="{% url 'technician_detail' tech.pk %}" class="btn btn-sm btn-info">
+                        {% if tech.is_active %}
+                            <span class="badge bg-success">Активен</span>
+                        {% else %}
+                            <span class="badge bg-danger">Неактивен</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'equipment:technician_detail' tech.pk %}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i> Преглед
                         </a>
-                        <a href="{% url 'technician_update' tech.pk %}" class="btn btn-sm btn-warning">
+                        <a href="{% url 'equipment:technician_update' tech.pk %}" class="btn btn-sm btn-warning">
                             <i class="bi bi-pencil"></i> Редактирай
                         </a>
                     </td>
@@ -56,7 +79,7 @@
 {% else %}
     <div class="alert alert-info">
         <i class="bi bi-info-circle"></i> Няма намерени техници.
-        <a href="{% url 'technician_create' %}">Добавете първия техник</a>.
+        <a href="{% url 'equipment:technician_create' %}">Добавете първия техник</a>.
     </div>
 {% endif %}
 {% endblock %}

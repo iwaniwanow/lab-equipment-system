@@ -1,24 +1,27 @@
 {% extends 'equipment/base.html' %}
+{% load permission_tags %}
 {% block title %}{{ location.code }} - Локации{% endblock %}
 {% block content %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'location_list' %}">Локации</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'equipment:dashboard' %}">Табло</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'equipment:location_list' %}">Локации</a></li>
         <li class="breadcrumb-item active">{{ location.code }}</li>
     </ol>
 </nav>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><i class="bi bi-geo-alt"></i> {{ location.code }} - {{ location.name }}</h1>
+    {% if user|can_modify_data %}
     <div>
-        <a href="{% url 'location_update' location.pk %}" class="btn btn-secondary">
+        <a href="{% url 'equipment:location_update' location.pk %}" class="btn btn-secondary">
             <i class="bi bi-pencil"></i> Редактирай
         </a>
-        <a href="{% url 'location_delete' location.pk %}" class="btn btn-danger">
+        <a href="{% url 'equipment:location_delete' location.pk %}" class="btn btn-danger">
             <i class="bi bi-trash"></i> Изтрий
         </a>
     </div>
+    {% endif %}
 </div>
 
 <div class="row">
@@ -53,7 +56,7 @@
                     <tr>
                         <th>Звено:</th>
                         <td>
-                            <a href="{% url 'department_detail' location.department.pk %}">
+                            <a href="{% url 'equipment:department_detail' location.department.pk %}">
                                 {{ location.department.code }} - {{ location.department.name }}
                             </a>
                         </td>
@@ -112,7 +115,7 @@
                     <ul class="list-group">
                         {% for eq in equipment_list %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <a href="{% url 'equipment_detail' eq.pk %}">{{ eq.asset_number }} - {{ eq.name }}</a>
+                                <a href="{% url 'equipment:equipment_detail' eq.pk %}">{{ eq.asset_number }} - {{ eq.name }}</a>
                                 <span class="badge
                                     {% if eq.status == 'active' %}bg-success
                                     {% elif eq.status == 'pending_validation' %}bg-info
@@ -144,7 +147,7 @@
 {% endif %}
 
 <div class="mt-3">
-    <a href="{% url 'location_list' %}" class="btn btn-secondary">
+    <a href="{% url 'equipment:location_list' %}" class="btn btn-secondary">
         <i class="bi bi-arrow-left"></i> Назад към списъка
     </a>
 </div>

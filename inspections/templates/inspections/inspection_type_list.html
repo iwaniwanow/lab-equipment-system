@@ -5,7 +5,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><i class="bi bi-clipboard2-check"></i> Типове проверки</h1>
-    <a href="{% url 'inspection_type_create' %}" class="btn btn-primary">
+    <a href="{% url 'inspections:inspection_type_create' %}" class="btn btn-primary">
         <i class="bi bi-plus-circle"></i> Добави тип проверка
     </a>
 </div>
@@ -28,10 +28,10 @@
                         {% endif %}
                     </div>
                     <div class="card-footer bg-transparent">
-                        <a href="{% url 'inspection_type_detail' itype.pk %}" class="btn btn-sm btn-outline-primary">
+                        <a href="{% url 'inspections:inspection_type_detail' itype.pk %}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-eye"></i> Преглед
                         </a>
-                        <a href="{% url 'inspection_type_update' itype.pk %}" class="btn btn-sm btn-outline-secondary">
+                        <a href="{% url 'inspections:inspection_type_update' itype.pk %}" class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-pencil"></i> Редактирай
                         </a>
                     </div>
@@ -42,7 +42,7 @@
 {% else %}
     <div class="alert alert-info">
         <i class="bi bi-info-circle"></i> Няма намерени типове проверки.
-        <a href="{% url 'inspection_type_create' %}">Добавете първия тип проверка</a>.
+        <a href="{% url 'inspections:inspection_type_create' %}">Добавете първия тип проверка</a>.
     </div>
 {% endif %}
 {% endblock %}

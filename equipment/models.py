@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.core.validators import MinLengthValidator, RegexValidator
 
 
@@ -389,6 +390,17 @@ class Technician(models.Model):
         ('other', 'Друго'),
     ]
 
+    # Връзка с потребител (опционална - може да е и външен техник)
+    user = models.OneToOneField(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='technician_profile',
+        verbose_name="Потребител",
+        help_text="Свързване с потребителски акаунт (само за вътрешни техници)"
+    )
+
     first_name = models.CharField(max_length=100, verbose_name="Име")
     last_name = models.CharField(max_length=100, verbose_name="Фамилия")
     position = models.CharField(max_length=200, blank=True, verbose_name="Длъжност")
@@ -431,4 +443,21 @@ class Technician(models.Model):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+    def save(self, *args, **kwargs):
+        # Ако има свързан потребител, синхронизирай данните
+        if self.user:
+            # Ако няма име и фамилия, вземи ги от потребителя
+            if not self.first_name:
+                self.first_name = self.user.first_name
+            if not self.last_name:
+                self.last_name = self.user.last_name
+            if not self.email:
+                self.email = self.user.email
+
+            # Синхронизирай звеното от UserProfile ако има
+            if hasattr(self.user, 'profile') and self.user.profile.department and not self.department:
+                self.department = self.user.profile.department
+
+        super().save(*args, **kwargs)
 

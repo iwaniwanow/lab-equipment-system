@@ -1,7 +1,9 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
-from .models import CustomUser, UserProfile
+from .models import UserProfile
+from equipment.models import Department
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -45,18 +47,17 @@ class CustomUserCreationForm(UserCreationForm):
         help_text='Optional. Format: +999999999'
     )
     
-    department = forms.CharField(
-        max_length=100,
+    department = forms.ModelChoiceField(
+        queryset=Department.objects.filter(is_active=True),
         required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Department'
-        })
+        empty_label="Избери звено",
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        help_text='Optional. Select your department'
     )
     
     class Meta:
-        model = CustomUser
-        fields = ('username', 'email', 'first_name', 'last_name', 'phone', 'department', 'password1', 'password2')
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
         widgets = {
             'username': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -78,7 +79,7 @@ class CustomUserCreationForm(UserCreationForm):
     def clean_email(self):
         """Validate that email is unique"""
         email = self.cleaned_data.get('email')
-        if CustomUser.objects.filter(email=email).exists():
+        if User.objects.filter(email=email).exists():
             raise ValidationError('A user with this email already exists.')
         return email
     
@@ -90,9 +91,14 @@ class CustomUserCreationForm(UserCreationForm):
         
         if commit:
             user.save()
-            # Create user profile automatically
-            UserProfile.objects.create(user=user)
-        
+            # Сигналът автоматично създава UserProfile
+            # Сега само актуализираме допълнителните полета
+            profile = user.profile  # Вече съществува заради сигнала
+            profile.phone = self.cleaned_data.get('phone', '')
+            profile.department = self.cleaned_data.get('department')
+            profile.is_approved = False
+            profile.save()
+
         return user
 
 
@@ -115,22 +121,18 @@ class CustomAuthenticationForm(AuthenticationForm):
     )
 
 
-class UserUpdateForm(UserChangeForm):
+class UserUpdateForm(forms.ModelForm):
     """
     Form for updating user information
     """
-    password = None  # Remove password field
-    
     class Meta:
-        model = CustomUser
-        fields = ('username', 'email', 'first_name', 'last_name', 'phone', 'department')
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name')
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control'}),
-            'department': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 
@@ -140,12 +142,14 @@ class UserProfileUpdateForm(forms.ModelForm):
     """
     class Meta:
         model = UserProfile
-        fields = ('bio', 'avatar', 'birth_date', 'address', 'emergency_contact', 'certifications')
+        fields = ('phone', 'department', 'bio', 'avatar', 'birth_date', 'address', 'emergency_contact', 'certifications')
         widgets = {
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+359888123456'}),
+            'department': forms.Select(attrs={'class': 'form-select'}),
             'bio': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
-                'placeholder': 'Tell us about yourself...'
+                'placeholder': 'Разкажете накратко за себе си...'
             }),
             'avatar': forms.FileInput(attrs={'class': 'form-control'}),
             'birth_date': forms.DateInput(attrs={
@@ -154,16 +158,17 @@ class UserProfileUpdateForm(forms.ModelForm):
             }),
             'address': forms.Textarea(attrs={
                 'class': 'form-control',
-                'rows': 3
+                'rows': 3,
+                'placeholder': 'Вашият адрес'
             }),
             'emergency_contact': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Name and phone number'
+                'placeholder': 'Име и телефон за спешен контакт'
             }),
             'certifications': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
-                'placeholder': 'List your certifications (one per line)'
+                'placeholder': 'Списък със сертификати (по един на ред)'
             }),
         }
 

@@ -1,10 +1,11 @@
-﻿﻿{% extends 'equipment/base.html' %}
+﻿{% extends 'equipment/base.html' %}
 {% load equipment_filters %}
+{% load permission_tags %}
 {% block title %}Списък оборудване{% endblock %}
 {% block content %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'equipment:dashboard' %}">Табло</a></li>
         <li class="breadcrumb-item active">Оборудване</li>
     </ol>
 </nav>
@@ -15,11 +16,13 @@
             <i class="bi bi-gear-wide-connected text-primary"></i> Списък оборудване
         </h1>
     </div>
+    {% if user|can_modify_data %}
     <div class="col-auto">
-        <a href="{% url 'equipment_create' %}" class="btn btn-primary">
+        <a href="{% url 'equipment:equipment_create' %}" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Добави оборудване
         </a>
     </div>
+    {% endif %}
 </div>
 
 <div class="card mb-4 shadow-sm">
@@ -54,7 +57,7 @@
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-funnel"></i> Филтрирай
                 </button>
-                <a href="{% url 'equipment_list' %}" class="btn btn-secondary">
+                <a href="{% url 'equipment:equipment_list' %}" class="btn btn-secondary">
                     <i class="bi bi-x-circle"></i> Изчисти
                 </a>
             </div>
@@ -102,15 +105,17 @@
                         </td>
                         <td class="text-center">
                             <div class="btn-group" role="group">
-                                <a href="{% url 'equipment_detail' eq.pk %}" class="btn btn-sm btn-outline-info" title="Преглед">
+                                <a href="{% url 'equipment:equipment_detail' eq.pk %}" class="btn btn-sm btn-outline-info" title="Преглед">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="{% url 'equipment_update' eq.pk %}" class="btn btn-sm btn-outline-warning" title="Редактирай">
+                                {% if user.is_authenticated %}
+                                <a href="{% url 'equipment:equipment_update' eq.pk %}" class="btn btn-sm btn-outline-warning" title="Редактирай">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <a href="{% url 'equipment_delete' eq.pk %}" class="btn btn-sm btn-outline-danger" title="Изтрий">
+                                <a href="{% url 'equipment:equipment_delete' eq.pk %}" class="btn btn-sm btn-outline-danger" title="Изтрий">
                                     <i class="bi bi-trash"></i>
                                 </a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

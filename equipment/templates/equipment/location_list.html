@@ -1,11 +1,14 @@
 {% extends 'equipment/base.html' %}
+{% load permission_tags %}
 {% block title %}Локации{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><i class="bi bi-geo-alt"></i> Локации</h1>
-    <a href="{% url 'location_create' %}" class="btn btn-primary">
+    {% if user|can_modify_data %}
+    <a href="{% url 'equipment:location_create' %}" class="btn btn-primary">
         <i class="bi bi-plus-circle"></i> Добави локация
     </a>
+    {% endif %}
 </div>
 
 {% if locations %}
@@ -38,10 +41,10 @@
                     <td>{{ loc.floor }}</td>
                     <td><span class="badge bg-secondary">{{ loc.equipment.count }}</span></td>
                     <td>
-                        <a href="{% url 'location_detail' loc.pk %}" class="btn btn-sm btn-info">
+                        <a href="{% url 'equipment:location_detail' loc.pk %}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i> Преглед
                         </a>
-                        <a href="{% url 'location_update' loc.pk %}" class="btn btn-sm btn-warning">
+                        <a href="{% url 'equipment:location_update' loc.pk %}" class="btn btn-sm btn-warning">
                             <i class="bi bi-pencil"></i> Редактирай
                         </a>
                     </td>
@@ -53,7 +56,7 @@
 {% else %}
     <div class="alert alert-info">
         <i class="bi bi-info-circle"></i> Няма намерени локации.
-        <a href="{% url 'location_create' %}">Добавете първата локация</a>.
+        <a href="{% url 'equipment:location_create' %}">Добавете първата локация</a>.
     </div>
 {% endif %}
 {% endblock %}

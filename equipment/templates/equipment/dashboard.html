@@ -1,4 +1,5 @@
 ﻿{% extends 'equipment/base.html' %}
+{% load permission_tags %}
 {% block title %}Табло - Лабораторно Оборудване{% endblock %}
 {% block content %}
 <div class="row mb-4">
@@ -10,15 +11,35 @@
     </div>
 </div>
 
-<!-- Подобрена секция Бързи действия -->
+{% if not user.is_authenticated %}
+<!-- Welcome message for GUESTS -->
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+    <h5 class="alert-heading"><i class="bi bi-info-circle"></i> Добре дошли в системата!</h5>
+    <p>Разглеждате системата като гост. Имате достъп само за преглед на информацията.</p>
+    <hr>
+    <p class="mb-0">
+        <a href="{% url 'users:login' %}" class="btn btn-primary btn-sm me-2">
+            <i class="bi bi-box-arrow-in-right"></i> Вход
+        </a>
+        <a href="{% url 'users:register' %}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-person-plus"></i> Регистрирай се
+        </a>
+    </p>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+
+{% if user.is_authenticated %}
+<!-- Подобрена секция Бързи действия - САМО ЗА AUTHENTICATED USERS -->
 <div class="mb-4">
     <h5 class="mb-3 d-flex align-items-center">
         <i class="bi bi-lightning-charge-fill text-warning me-2" style="font-size: 1.5rem;"></i>
         <span class="fw-bold">Бързи действия</span>
     </h5>
     <div class="row g-3">
+        {% if user|can_modify_data %}
         <div class="col-md-6 col-lg-3">
-            <a href="{% url 'equipment_create' %}" class="text-decoration-none">
+            <a href="{% url 'equipment:equipment_create' %}" class="text-decoration-none">
                 <div class="card quick-action-card primary-card h-100">
                     <div class="card-body text-center p-4">
                         <div class="quick-action-icon mb-3">
@@ -30,8 +51,9 @@
                 </div>
             </a>
         </div>
+        {% endif %}
         <div class="col-md-6 col-lg-3">
-            <a href="{% url 'maintenance_create' %}" class="text-decoration-none">
+            <a href="{% url 'maintenance:maintenance_create' %}" class="text-decoration-none">
                 <div class="card quick-action-card success-card h-100">
                     <div class="card-body text-center p-4">
                         <div class="quick-action-icon mb-3">
@@ -44,7 +66,7 @@
             </a>
         </div>
         <div class="col-md-6 col-lg-3">
-            <a href="{% url 'inspection_create' %}" class="text-decoration-none">
+            <a href="{% url 'inspections:inspection_create' %}" class="text-decoration-none">
                 <div class="card quick-action-card info-card h-100">
                     <div class="card-body text-center p-4">
                         <div class="quick-action-icon mb-3">
@@ -57,7 +79,7 @@
             </a>
         </div>
         <div class="col-md-6 col-lg-3">
-            <a href="{% url 'equipment_list' %}" class="text-decoration-none">
+            <a href="{% url 'equipment:equipment_list' %}" class="text-decoration-none">
                 <div class="card quick-action-card secondary-card h-100">
                     <div class="card-body text-center p-4">
                         <div class="quick-action-icon mb-3">
@@ -71,14 +93,16 @@
         </div>
     </div>
 </div>
+{% endif %}
 
+<!-- Statistics Section - VISIBLE TO ALL -->
 <div class="row g-3 mb-4">
     <div class="col-md-6 col-lg-3">
-        <div class="card Табло-card text-white bg-primary">
+        <div class="card text-white bg-primary">
             <div class="card-body text-center">
                 <h6 class="card-title"><i class="bi bi-tools"></i> Общо оборудване</h6>
                 <p class="display-4">{{ total_equipment }}</p>
-                <a href="{% url 'equipment_list' %}" class="btn btn-light btn-sm">
+                <a href="{% url 'equipment:equipment_list' %}" class="btn btn-light btn-sm">
                     <i class="bi bi-arrow-right"></i> Виж всички
                 </a>
             </div>
@@ -132,7 +156,7 @@
                         <div class="row">
                             {% for eq in active_equipment %}
                             <div class="col-md-6 col-lg-4 mb-2">
-                                <a href="{% url 'equipment_detail' eq.pk %}" class="text-decoration-none">
+                                <a href="{% url 'equipment:equipment_detail' eq.pk %}" class="text-decoration-none">
                                     <div class="border rounded p-2 hover-shadow">
                                         <strong>{{ eq.asset_number }}</strong> - {{ eq.name }}
                                         <br><small class="text-muted">{{ eq.category.name }}</small>
@@ -174,7 +198,7 @@
                                         <td>{{ eq.name }}</td>
                                         <td><span class="text-danger">{{ eq.get_missing_requirements_display }}</span></td>
                                         <td>
-                                            <a href="{% url 'equipment_detail' eq.pk %}" class="btn btn-sm btn-outline-primary">
+                                            <a href="{% url 'equipment:equipment_detail' eq.pk %}" class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-arrow-right"></i> Виж
                                             </a>
                                         </td>
@@ -266,7 +290,7 @@
                         <div class="row g-3">
                             {% for eq in pending_validation_equipment %}
                             <div class="col-md-6 col-lg-4">
-                                <a href="{% url 'equipment_detail' eq.pk %}" class="text-decoration-none">
+                                <a href="{% url 'equipment:equipment_detail' eq.pk %}" class="text-decoration-none">
                                     <div class="equipment-item validation">
                                         <i class="bi bi-hourglass-split equipment-icon"></i>
                                         <span class="equipment-asset">{{ eq.asset_number }}</span>
@@ -298,7 +322,7 @@
                         <div class="row g-3">
                             {% for eq in pending_calibration_equipment %}
                             <div class="col-md-6 col-lg-4">
-                                <a href="{% url 'equipment_detail' eq.pk %}" class="text-decoration-none">
+                                <a href="{% url 'equipment:equipment_detail' eq.pk %}" class="text-decoration-none">
                                     <div class="equipment-item calibration">
                                         <i class="bi bi-calculator equipment-icon"></i>
                                         <span class="equipment-asset">{{ eq.asset_number }}</span>
@@ -330,7 +354,7 @@
                         <div class="row g-3">
                             {% for eq in pending_technical_review_equipment %}
                             <div class="col-md-6 col-lg-4">
-                                <a href="{% url 'equipment_detail' eq.pk %}" class="text-decoration-none">
+                                <a href="{% url 'equipment:equipment_detail' eq.pk %}" class="text-decoration-none">
                                     <div class="equipment-item technical">
                                         <i class="bi bi-clipboard-check equipment-icon"></i>
                                         <span class="equipment-asset">{{ eq.asset_number }}</span>
@@ -362,7 +386,7 @@
                         <div class="row g-3">
                             {% for eq in maintenance_equipment %}
                             <div class="col-md-6 col-lg-4">
-                                <a href="{% url 'equipment_detail' eq.pk %}" class="text-decoration-none">
+                                <a href="{% url 'equipment:equipment_detail' eq.pk %}" class="text-decoration-none">
                                     <div class="equipment-item maintenance-item">
                                         <i class="bi bi-wrench equipment-icon"></i>
                                         <span class="equipment-asset">{{ eq.asset_number }}</span>

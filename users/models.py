@@ -1,12 +1,18 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import RegexValidator
 
 
-class CustomUser(AbstractUser):
+class UserProfile(models.Model):
     """
-    Extended User model with additional fields
+    One-to-One relationship with User for additional profile information
     """
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='profile'
+    )
+    
     ROLE_CHOICES = [
         ('admin', 'Administrator'),
         ('manager', 'Manager'),
@@ -35,40 +41,13 @@ class CustomUser(AbstractUser):
         help_text="Contact phone number"
     )
     
-    department = models.CharField(
-        max_length=100,
+    department = models.ForeignKey(
+        'equipment.Department',
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        help_text="Department name"
-    )
-    
-    is_active = models.BooleanField(
-        default=True,
-        help_text="Designates whether this user should be treated as active"
-    )
-    
-    class Meta:
-        verbose_name = "User"
-        verbose_name_plural = "Users"
-        ordering = ['username']
-    
-    def __str__(self):
-        return f"{self.username} ({self.get_role_display()})"
-    
-    @property
-    def full_name(self):
-        """Return full name of the user"""
-        return f"{self.first_name} {self.last_name}".strip() or self.username
-
-
-class UserProfile(models.Model):
-    """
-    One-to-One relationship with CustomUser for additional profile information
-    """
-    user = models.OneToOneField(
-        CustomUser,
-        on_delete=models.CASCADE,
-        related_name='profile'
+        related_name='users',
+        help_text="Department"
     )
     
     bio = models.TextField(
@@ -114,6 +93,11 @@ class UserProfile(models.Model):
         blank=True,
         null=True,
         help_text="Date of hire"
+    )
+    
+    is_approved = models.BooleanField(
+        default=False,
+        help_text="User must be approved by administrator before login"
     )
     
     created_at = models.DateTimeField(auto_now_add=True)

@@ -1,8 +1,31 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .models import MaintenanceRecord, MaintenanceType
 from .forms import MaintenanceRecordForm, MaintenanceTypeForm
 from equipment.models import Equipment
+
+
+def user_can_create_records(user):
+    """Проверява дали потребителят може да създава записи"""
+    if not user.is_authenticated:
+        return False
+    if user.is_superuser:
+        return True
+    if hasattr(user, 'profile'):
+        return user.profile.role in ['admin', 'manager', 'technician', 'operator']
+    return False
+
+
+def user_can_modify(user):
+    """Проверява дали може да редактира/изтрива"""
+    if not user.is_authenticated:
+        return False
+    if user.is_superuser:
+        return True
+    if hasattr(user, 'profile'):
+        return user.profile.role in ['admin', 'manager']
+    return False
 
 def maintenance_list(request):
     maintenance_records = MaintenanceRecord.objects.select_related(
@@ -33,13 +56,22 @@ def maintenance_detail(request, pk):
     return render(request, 'maintenance/maintenance_detail.html', {'maintenance': maintenance})
 
 
+@login_required
 def maintenance_create(request):
+    if not user_can_create_records(request.user):
+        messages.error(request, 'Нямате права да създавате записи за поддръжка. Само администратори, мениджъри, техници и оператори могат.')
+        return redirect('maintenance:maintenance_list')
+
     if request.method == 'POST':
-        form = MaintenanceRecordForm(request.POST)
+        form = MaintenanceRecordForm(request.POST, user=request.user)
         if form.is_valid():
-            maintenance = form.save()
+            maintenance = form.save(commit=False)
+            # Ако потребителят е техник и полето е празно, задай го автоматично
+            if not maintenance.technician and hasattr(request.user, 'technician_profile'):
+                maintenance.technician = request.user.technician_profile
+            maintenance.save()
             messages.success(request, f'Записът за поддръжка е създаден успешно! ({maintenance.equipment.asset_number})')
-            return redirect('maintenance_detail', pk=maintenance.pk)
+            return redirect('maintenance:maintenance_detail', pk=maintenance.pk)
         else:
             print("=" * 60)
             print("ГРЕШКИ ВЪВ ФОРМАТА:")
@@ -48,31 +80,41 @@ def maintenance_create(request):
             print("=" * 60)
             messages.error(request, 'Има грешки във формата! Моля, проверете полетата.')
     else:
-        form = MaintenanceRecordForm()
+        form = MaintenanceRecordForm(user=request.user)
 
     return render(request, 'maintenance/maintenance_form.html', {'form': form, 'action': 'Създай'})
 
 
+@login_required
 def maintenance_update(request, pk):
+    if not user_can_modify(request.user):
+        messages.error(request, 'Нямате права да редактирате записи за поддръжка. Само администратори и мениджъри могат.')
+        return redirect('maintenance:maintenance_detail', pk=pk)
+
     maintenance = get_object_or_404(MaintenanceRecord, pk=pk)
     if request.method == 'POST':
-        form = MaintenanceRecordForm(request.POST, instance=maintenance)
+        form = MaintenanceRecordForm(request.POST, instance=maintenance, user=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Записът за поддръжка е актуализиран успешно!')
-            return redirect('maintenance_detail', pk=maintenance.pk)
+            return redirect('maintenance:maintenance_detail', pk=maintenance.pk)
     else:
-        form = MaintenanceRecordForm(instance=maintenance)
+        form = MaintenanceRecordForm(instance=maintenance, user=request.user)
 
     return render(request, 'maintenance/maintenance_form.html', {'form': form, 'action': 'Редактирай'})
 
 
+@login_required
 def maintenance_delete(request, pk):
+    if not user_can_modify(request.user):
+        messages.error(request, 'Нямате права да изтривате записи за поддръжка. Само администратори и мениджъри могат.')
+        return redirect('maintenance:maintenance_detail', pk=pk)
+
     maintenance = get_object_or_404(MaintenanceRecord, pk=pk)
     if request.method == 'POST':
         maintenance.delete()
         messages.success(request, 'Записът за поддръжка е изтрит успешно!')
-        return redirect('maintenance_list')
+        return redirect('maintenance:maintenance_list')
 
     return render(request, 'maintenance/maintenance_confirm_delete.html', {'maintenance': maintenance})
 
@@ -99,7 +141,7 @@ def maintenance_type_create(request):
         if form.is_valid():
             maintenance_type = form.save()
             messages.success(request, f'Тип поддръжка "{maintenance_type.name}" е създаден успешно!')
-            return redirect('maintenance_type_detail', pk=maintenance_type.pk)
+            return redirect('maintenance:maintenance_type_detail', pk=maintenance_type.pk)
     else:
         form = MaintenanceTypeForm()
 
@@ -113,7 +155,7 @@ def maintenance_type_update(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, f'Тип поддръжка "{maintenance_type.name}" е актуализиран успешно!')
-            return redirect('maintenance_type_detail', pk=maintenance_type.pk)
+            return redirect('maintenance:maintenance_type_detail', pk=maintenance_type.pk)
     else:
         form = MaintenanceTypeForm(instance=maintenance_type)
 
@@ -127,7 +169,7 @@ def maintenance_type_delete(request, pk):
         name = maintenance_type.name
         maintenance_type.delete()
         messages.success(request, f'Тип поддръжка "{name}" е изтрит успешно!')
-        return redirect('maintenance_type_list')
+        return redirect('maintenance:maintenance_type_list')
 
     return render(request, 'maintenance/maintenance_type_confirm_delete.html', {'maintenance_type': maintenance_type})
 

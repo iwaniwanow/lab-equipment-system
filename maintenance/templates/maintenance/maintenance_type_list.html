@@ -5,7 +5,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><i class="bi bi-wrench-adjustable"></i> Типове поддръжка</h1>
-    <a href="{% url 'maintenance_type_create' %}" class="btn btn-primary">
+    <a href="{% url 'maintenance:maintenance_type_create' %}" class="btn btn-primary">
         <i class="bi bi-plus-circle"></i> Добави тип поддръжка
     </a>
 </div>
@@ -30,10 +30,10 @@
                         {% endif %}
                     </div>
                     <div class="card-footer bg-transparent">
-                        <a href="{% url 'maintenance_type_detail' mtype.pk %}" class="btn btn-sm btn-outline-primary">
+                        <a href="{% url 'maintenance:maintenance_type_detail' mtype.pk %}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-eye"></i> Преглед
                         </a>
-                        <a href="{% url 'maintenance_type_update' mtype.pk %}" class="btn btn-sm btn-outline-secondary">
+                        <a href="{% url 'maintenance:maintenance_type_update' mtype.pk %}" class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-pencil"></i> Редактирай
                         </a>
                     </div>
@@ -44,7 +44,7 @@
 {% else %}
     <div class="alert alert-info">
         <i class="bi bi-info-circle"></i> Няма намерени типове поддръжка.
-        <a href="{% url 'maintenance_type_create' %}">Добавете първия тип поддръжка</a>.
+        <a href="{% url 'maintenance:maintenance_type_create' %}">Добавете първия тип поддръжка</a>.
     </div>
 {% endif %}
 {% endblock %}

@@ -13,7 +13,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'dashboard' %}">
+            <a class="navbar-brand" href="{% url 'equipment:dashboard' %}">
                 <i class="bi bi-gear-fill"></i> Лабораторно Оборудване
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -22,53 +22,95 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'Табло' %}active{% endif %}" href="{% url 'dashboard' %}">
+                        <a class="nav-link" href="{% url 'equipment:dashboard' %}">
                             <i class="bi bi-speedometer2"></i> Табло
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link {% if 'equipment' in request.path %}active{% endif %}" href="{% url 'equipment_list' %}">
+                        <a class="nav-link" href="{% url 'equipment:equipment_list' %}">
                             <i class="bi bi-gear"></i> Оборудване
                         </a>
                     </li>
 
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'equipment:manufacturer_list' %}">
+                            <i class="bi bi-building"></i> Производители
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'equipment:category_list' %}">
+                            <i class="bi bi-tags"></i> Категории
+                        </a>
+                    </li>
+
+                    {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if 'inspection' in request.path or 'maintenance' in request.path %}active{% endif %}"
+                        <a class="nav-link dropdown-toggle"
                            href="#" id="activitiesDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-list-check"></i> Дейности
                         </a>
                         <ul class="dropdown-menu">
                             <li><h6 class="dropdown-header"><i class="bi bi-clipboard-check"></i> Проверки</h6></li>
-                            <li><a class="dropdown-item" href="{% url 'inspection_list' %}">Всички проверки</a></li>
-                            <li><a class="dropdown-item" href="{% url 'inspection_create' %}">Нова проверка</a></li>
+                            <li><a class="dropdown-item" href="{% url 'inspections:inspection_list' %}">Всички проверки</a></li>
+                            <li><a class="dropdown-item" href="{% url 'inspections:inspection_create' %}">Нова проверка</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><h6 class="dropdown-header"><i class="bi bi-wrench"></i> Поддръжка</h6></li>
-                            <li><a class="dropdown-item" href="{% url 'maintenance_list' %}">Всички записи</a></li>
-                            <li><a class="dropdown-item" href="{% url 'maintenance_create' %}">Нов запис</a></li>
+                            <li><a class="dropdown-item" href="{% url 'maintenance:maintenance_list' %}">Всички записи</a></li>
+                            <li><a class="dropdown-item" href="{% url 'maintenance:maintenance_create' %}">Нов запис</a></li>
                         </ul>
                     </li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if 'manufacturer' in request.path or 'category' in request.path or 'type' in request.path or 'department' in request.path or 'location' in request.path or 'technician' in request.path %}active{% endif %}"
+                        <a class="nav-link dropdown-toggle"
                            href="#" id="setupDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-gear-wide-connected"></i> Настройки
                         </a>
                         <ul class="dropdown-menu">
-                            <li><h6 class="dropdown-header"><i class="bi bi-gear-fill"></i> Основни</h6></li>
-                            <li><a class="dropdown-item" href="{% url 'manufacturer_list' %}"><i class="bi bi-building-fill"></i> Производители</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category_list' %}"><i class="bi bi-tags-fill"></i> Категории</a></li>
-                            <li><hr class="dropdown-divider"></li>
                             <li><h6 class="dropdown-header"><i class="bi bi-diagram-3-fill"></i> Организация</h6></li>
-                            <li><a class="dropdown-item" href="{% url 'department_list' %}"><i class="bi bi-diagram-3-fill"></i> Звена</a></li>
-                            <li><a class="dropdown-item" href="{% url 'location_list' %}"><i class="bi bi-geo-alt-fill"></i> Локации</a></li>
-                            <li><a class="dropdown-item" href="{% url 'technician_list' %}"><i class="bi bi-person-badge-fill"></i> Техници</a></li>
+                            <li><a class="dropdown-item" href="{% url 'equipment:department_list' %}"><i class="bi bi-diagram-3-fill"></i> Звена</a></li>
+                            <li><a class="dropdown-item" href="{% url 'equipment:location_list' %}"><i class="bi bi-geo-alt-fill"></i> Локации</a></li>
+                            <li><a class="dropdown-item" href="{% url 'equipment:technician_list' %}"><i class="bi bi-person-badge-fill"></i> Техници</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><h6 class="dropdown-header"><i class="bi bi-list-check"></i> Типове дейности</h6></li>
-                            <li><a class="dropdown-item" href="{% url 'inspection_type_list' %}"><i class="bi bi-clipboard2-check-fill"></i> Типове проверки</a></li>
-                            <li><a class="dropdown-item" href="{% url 'maintenance_type_list' %}"><i class="bi bi-gear-fill"></i> Типове поддръжка</a></li>
+                            <li><a class="dropdown-item" href="{% url 'inspections:inspection_type_list' %}"><i class="bi bi-clipboard2-check-fill"></i> Типове проверки</a></li>
+                            <li><a class="dropdown-item" href="{% url 'maintenance:maintenance_type_list' %}"><i class="bi bi-gear-fill"></i> Типове поддръжка</a></li>
                         </ul>
                     </li>
+                    {% endif %}
+                </ul>
+
+                <!-- User Menu / Login/Register -->
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'users:profile' %}"><i class="bi bi-person"></i> Моят Профил</a></li>
+                            <li><a class="dropdown-item" href="{% url 'users:profile_edit' %}"><i class="bi bi-pencil"></i> Редактирай Профил</a></li>
+                            {% if user.is_superuser %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/admin/"><i class="bi bi-shield-lock"></i> Admin Panel</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'users:logout' %}"><i class="bi bi-box-arrow-right"></i> Излез</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:login' %}">
+                            <i class="bi bi-box-arrow-in-right"></i> Вход
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light ms-2" href="{% url 'users:register' %}" style="border-radius: 20px;">
+                            <i class="bi bi-person-plus"></i> Регистрация
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

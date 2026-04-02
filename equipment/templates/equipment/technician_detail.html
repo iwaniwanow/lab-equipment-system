@@ -1,24 +1,27 @@
 {% extends 'equipment/base.html' %}
+{% load permission_tags %}
 {% block title %}{{ technician.get_full_name }} - Техници{% endblock %}
 {% block content %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'technician_list' %}">Техници</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'equipment:dashboard' %}">Табло</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'equipment:technician_list' %}">Техници</a></li>
         <li class="breadcrumb-item active">{{ technician.get_full_name }}</li>
     </ol>
 </nav>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><i class="bi bi-person-badge"></i> {{ technician.get_full_name }}</h1>
+    {% if user|can_modify_data %}
     <div>
-        <a href="{% url 'technician_update' technician.pk %}" class="btn btn-secondary">
+        <a href="{% url 'equipment:technician_update' technician.pk %}" class="btn btn-secondary">
             <i class="bi bi-pencil"></i> Редактирай
         </a>
-        <a href="{% url 'technician_delete' technician.pk %}" class="btn btn-danger">
+        <a href="{% url 'equipment:technician_delete' technician.pk %}" class="btn btn-danger">
             <i class="bi bi-trash"></i> Изтрий
         </a>
     </div>
+    {% endif %}
 </div>
 
 <div class="row">
@@ -29,8 +32,31 @@
             </div>
             <div class="card-body">
                 <table class="table table-borderless">
+                    {% if technician.user %}
                     <tr>
-                        <th style="width: 35%">Име:</th>
+                        <th style="width: 35%">Потребител:</th>
+                        <td>
+                            <span class="badge bg-success">
+                                <i class="bi bi-person-check"></i> {{ technician.user.username }}
+                            </span>
+                            <br>
+                            <small class="text-muted">Свързан с акаунт в системата</small>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <th style="width: 35%">Тип:</th>
+                        <td>
+                            <span class="badge bg-secondary">
+                                <i class="bi bi-person-x"></i> Външен техник
+                            </span>
+                            <br>
+                            <small class="text-muted">Без потребителски акаунт</small>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <th>Име:</th>
                         <td>{{ technician.first_name }}</td>
                     </tr>
                     <tr>
@@ -98,7 +124,7 @@
                     <tr>
                         <th style="width: 35%">Звено:</th>
                         <td>
-                            <a href="{% url 'department_detail' technician.department.pk %}">
+                            <a href="{% url 'equipment:department_detail' technician.department.pk %}">
                                 {{ technician.department.code }} - {{ technician.department.name }}
                             </a>
                         </td>
@@ -149,7 +175,7 @@
 {% endif %}
 
 <div class="mt-3">
-    <a href="{% url 'technician_list' %}" class="btn btn-secondary">
+    <a href="{% url 'equipment:technician_list' %}" class="btn btn-secondary">
         <i class="bi bi-arrow-left"></i> Назад към списъка
     </a>
 </div>

@@ -5,8 +5,8 @@
 {% block content %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'maintenance_list' %}">Поддръжка</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'equipment:dashboard' %}">Табло</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'maintenance:maintenance_list' %}">Поддръжка</a></li>
         <li class="breadcrumb-item active">{{ action }}</li>
     </ol>
 </nav>
@@ -24,6 +24,12 @@
         <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Данни за поддръжката</h5>
     </div>
     <div class="card-body">
+        {% if user.technician_profile and user.profile.role == 'technician' %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> <strong>Информация:</strong> Вие сте автоматично зададен като извършител на тази поддръжка.
+        </div>
+        {% endif %}
+
         <form method="post">
             {% csrf_token %}
 
@@ -197,7 +203,7 @@
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-circle"></i> Запиши
                 </button>
-                <a href="{% url 'maintenance_list' %}" class="btn btn-secondary">
+                <a href="{% url 'maintenance:maintenance_list' %}" class="btn btn-secondary">
                     <i class="bi bi-x-circle"></i> Откажи
                 </a>
             </div>

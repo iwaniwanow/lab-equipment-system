@@ -8,7 +8,7 @@
         <h1 class="display-4">Записи за поддръжка</h1>
     </div>
     <div class="col-auto">
-        <a href="{% url 'maintenance_create' %}" class="btn btn-primary">
+        <a href="{% url 'maintenance:maintenance_create' %}" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Добави запис
         </a>
     </div>
@@ -43,7 +43,7 @@
                 <button type="submit" class="btn btn-primary me-2">
                     <i class="bi bi-funnel"></i> Филтрирай
                 </button>
-                <a href="{% url 'maintenance_list' %}" class="btn btn-secondary">
+                <a href="{% url 'maintenance:maintenance_list' %}" class="btn btn-secondary">
                     <i class="bi bi-x-circle"></i> Изчисти
                 </a>
             </div>
@@ -105,13 +105,13 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'maintenance_detail' record.pk %}" class="btn btn-sm btn-info">
+                    <a href="{% url 'maintenance:maintenance_detail' record.pk %}" class="btn btn-sm btn-info">
                         <i class="bi bi-eye"></i> Преглед
                     </a>
-                    <a href="{% url 'maintenance_update' record.pk %}" class="btn btn-sm btn-warning">
+                    <a href="{% url 'maintenance:maintenance_update' record.pk %}" class="btn btn-sm btn-warning">
                         <i class="bi bi-pencil"></i> Редактирай
                     </a>
-                    <a href="{% url 'maintenance_delete' record.pk %}" class="btn btn-sm btn-danger">
+                    <a href="{% url 'maintenance:maintenance_delete' record.pk %}" class="btn btn-sm btn-danger">
                         <i class="bi bi-trash"></i> Изтрий
                     </a>
                 </td>

@@ -1,10 +1,11 @@
 ﻿{% extends 'equipment/base.html' %}
+{% load permission_tags %}
 {% block title %}{{ equipment.name }} - Лабораторно Оборудване{% endblock %}
 {% block content %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Табло</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'equipment_list' %}">Оборудване</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'equipment:dashboard' %}">Табло</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'equipment:equipment_list' %}">Оборудване</a></li>
         <li class="breadcrumb-item active">{{ equipment.asset_number }}</li>
     </ol>
 </nav>
@@ -14,14 +15,16 @@
         <h1 class="display-5">{{ equipment.name }}</h1>
         <p class="text-muted">ASSET: {{ equipment.asset_number }}</p>
     </div>
+    {% if user|can_modify_data %}
     <div class="col-auto">
-        <a href="{% url 'equipment_update' equipment.pk %}" class="btn btn-warning">
+        <a href="{% url 'equipment:equipment_update' equipment.pk %}" class="btn btn-warning">
             <i class="bi bi-pencil"></i> Редактирай
         </a>
-        <a href="{% url 'equipment_delete' equipment.pk %}" class="btn btn-danger">
+        <a href="{% url 'equipment:equipment_delete' equipment.pk %}" class="btn btn-danger">
             <i class="bi bi-trash"></i> Изтрий
         </a>
     </div>
+    {% endif %}
 </div>
 
 <!-- Предупреждения за статуса -->
@@ -57,19 +60,21 @@
             Това оборудване е извън експлоатация поради провалена проверка.
         {% endif %}
     </p>
+    {% if user.is_authenticated %}
     <hr>
     <div class="d-flex gap-2">
         {% if equipment.status == 'pending_calibration' or equipment.status == 'pending_validation' or equipment.status == 'pending_multiple' %}
-            <a href="{% url 'maintenance_create' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-primary">
+            <a href="{% url 'maintenance:maintenance_create' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-primary">
                 <i class="bi bi-wrench"></i> Запиши поддръжка (Калибровка/Валидиране)
             </a>
         {% endif %}
         {% if equipment.status == 'pending_technical_review' or equipment.status == 'pending_multiple' %}
-            <a href="{% url 'inspection_create' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-primary">
+            <a href="{% url 'inspections:inspection_create' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-primary">
                 <i class="bi bi-clipboard-check"></i> Запиши технически преглед
             </a>
         {% endif %}
     </div>
+    {% endif %}
 </div>
 {% endif %}
 
@@ -147,9 +152,11 @@
         <div class="card mb-4">
             <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="bi bi-clipboard-check"></i> Последни проверки</h5>
-                <a href="{% url 'inspection_create' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-light">
+                {% if user.is_authenticated %}
+                <a href="{% url 'inspections:inspection_create' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-light">
                     <i class="bi bi-plus"></i> Нова
                 </a>
+                {% endif %}
             </div>
             <div class="card-body">
                 {% if inspections %}
@@ -172,7 +179,7 @@
                                 </div>
                             </div>
                             <div class="mt-2">
-                                <a href="{% url 'inspection_detail' inspection.pk %}" class="btn btn-sm btn-outline-primary">
+                                <a href="{% url 'inspections:inspection_detail' inspection.pk %}" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-eye"></i> Преглед
                                 </a>
                             </div>
@@ -180,15 +187,17 @@
                         {% endfor %}
                     </ul>
                     <div class="mt-3 text-center">
-                        <a href="{% url 'inspection_list' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-outline-info">
+                        <a href="{% url 'inspections:inspection_list' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-outline-info">
                             Всички проверки
                         </a>
                     </div>
                 {% else %}
                     <p class="text-muted">Все още няма записани проверки.</p>
-                    <a href="{% url 'inspection_create' %}?equipment={{ equipment.pk }}" class="btn btn-primary">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'inspections:inspection_create' %}?equipment={{ equipment.pk }}" class="btn btn-primary">
                         <i class="bi bi-plus-circle"></i> Добави първата проверка
                     </a>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -198,9 +207,11 @@
         <div class="card mb-4">
             <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="bi bi-wrench"></i> Последна поддръжка</h5>
-                <a href="{% url 'maintenance_create' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-light">
+                {% if user.is_authenticated %}
+                <a href="{% url 'maintenance:maintenance_create' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-light">
                     <i class="bi bi-plus"></i> Нова
                 </a>
+                {% endif %}
             </div>
             <div class="card-body">
                 {% if maintenance_records %}
@@ -226,7 +237,7 @@
                             <small class="text-muted">Следваща дата: {{ record.next_due_date }}</small>
                             {% endif %}
                             <div class="mt-2">
-                                <a href="{% url 'maintenance_detail' record.pk %}" class="btn btn-sm btn-outline-primary">
+                                <a href="{% url 'maintenance:maintenance_detail' record.pk %}" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-eye"></i> Преглед
                                 </a>
                             </div>
@@ -234,15 +245,17 @@
                         {% endfor %}
                     </ul>
                     <div class="mt-3 text-center">
-                        <a href="{% url 'maintenance_list' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-outline-info">
+                        <a href="{% url 'maintenance:maintenance_list' %}?equipment={{ equipment.pk }}" class="btn btn-sm btn-outline-info">
                             Всички записи
                         </a>
                     </div>
                 {% else %}
                     <p class="text-muted">Все още няма записи за поддръжка.</p>
-                    <a href="{% url 'maintenance_create' %}?equipment={{ equipment.pk }}" class="btn btn-primary">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'maintenance:maintenance_create' %}?equipment={{ equipment.pk }}" class="btn btn-primary">
                         <i class="bi bi-plus-circle"></i> Добави първия запис
                     </a>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -250,7 +263,7 @@
 </div>
 
 <div class="mt-3">
-    <a href="{% url 'equipment_list' %}" class="btn btn-secondary">
+    <a href="{% url 'equipment:equipment_list' %}" class="btn btn-secondary">
         <i class="bi bi-arrow-left"></i> Назад към списъка
     </a>
 </div>

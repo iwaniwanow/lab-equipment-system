@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, DetailView
+from django.views.generic import CreateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, UserUpdateForm, UserProfileUpdateForm
-from .models import CustomUser, UserProfile
+from .models import UserProfile
 
 
 class RegisterView(CreateView):
@@ -19,7 +20,7 @@ class RegisterView(CreateView):
     
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, f'Account created successfully for {form.cleaned_data["username"]}! You can now log in.')
+        messages.success(self.request, f'Акаунт създаден успешно за {form.cleaned_data["username"]}! Моля изчакайте одобрение от администратор преди да влезете.')
         return response
     
     def dispatch(self, request, *args, **kwargs):
@@ -42,6 +43,12 @@ def login_view(request):
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             if user is not None:
+                # Check if user is approved
+                profile = UserProfile.objects.filter(user=user).first()
+                if profile and not profile.is_approved:
+                    messages.error(request, 'Вашият акаунт все още не е одобрен от администратор. Моля изчакайте одобрение.')
+                    return redirect('users:login')
+                
                 login(request, user)
                 messages.success(request, f'Welcome back, {username}!')
                 next_url = request.GET.get('next', 'equipment:dashboard')
@@ -69,7 +76,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
     """
     User profile view (CBV)
     """
-    model = CustomUser
+    model = User
     template_name = 'users/profile.html'
     context_object_name = 'profile_user'
     
@@ -114,7 +121,7 @@ class UserDetailView(LoginRequiredMixin, DetailView):
     """
     View for viewing other users' public profiles
     """
-    model = CustomUser
+    model = User
     template_name = 'users/user_detail.html'
     context_object_name = 'profile_user'
     slug_field = 'username'
