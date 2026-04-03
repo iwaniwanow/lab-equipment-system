@@ -1,0 +1,261 @@
+{% extends 'equipment/base.html' %}
+{% load static %}
+
+{% block title %}API Documentation{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4">
+                    <i class="bi bi-code-square"></i>
+                    REST API Documentation
+                </h1>
+                <p class="lead text-muted">
+                    Equipment Management System API
+                </p>
+            </div>
+
+            <!-- Authentication Required Warning -->
+            {% if not user.is_authenticated %}
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">
+                    <i class="bi bi-shield-lock"></i>
+                    Authentication Required
+                </h4>
+                <p>
+                    This API requires authentication. You must be logged in to access API endpoints.
+                </p>
+                <hr>
+                <p class="mb-0">
+                    <a href="{% url 'users:login' %}?next=/api/" class="btn btn-primary">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Log In to Access API
+                    </a>
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- API Overview -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-info-circle"></i>
+                        API Overview
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p>
+                        The Equipment Management System provides a comprehensive RESTful API
+                        for programmatic access to equipment data, maintenance records, inspections,
+                        and more.
+                    </p>
+
+                    <h5 class="mt-4">Key Features:</h5>
+                    <ul>
+                        <li><strong>Full CRUD Operations</strong> - Create, Read, Update, Delete</li>
+                        <li><strong>Filtering & Search</strong> - Find exactly what you need</li>
+                        <li><strong>Pagination</strong> - Efficient data retrieval</li>
+                        <li><strong>Nested Data</strong> - Related objects included</li>
+                        <li><strong>Custom Actions</strong> - Specialized endpoints</li>
+                        <li><strong>Authentication Required</strong> - Secure access only</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Available Endpoints -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-list-ul"></i>
+                        Available Endpoints
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Endpoint</th>
+                                    <th>Description</th>
+                                    <th>Methods</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>/api/equipment/</code></td>
+                                    <td>Equipment management</td>
+                                    <td>
+                                        <span class="badge bg-primary">GET</span>
+                                        <span class="badge bg-success">POST</span>
+                                        <span class="badge bg-warning">PUT</span>
+                                        <span class="badge bg-danger">DELETE</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>/api/manufacturers/</code></td>
+                                    <td>Manufacturer data</td>
+                                    <td>
+                                        <span class="badge bg-primary">GET</span>
+                                        <span class="badge bg-success">POST</span>
+                                        <span class="badge bg-warning">PUT</span>
+                                        <span class="badge bg-danger">DELETE</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>/api/categories/</code></td>
+                                    <td>Equipment categories</td>
+                                    <td>
+                                        <span class="badge bg-primary">GET</span>
+                                        <span class="badge bg-success">POST</span>
+                                        <span class="badge bg-warning">PUT</span>
+                                        <span class="badge bg-danger">DELETE</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>/api/maintenance/</code></td>
+                                    <td>Maintenance records</td>
+                                    <td>
+                                        <span class="badge bg-primary">GET</span>
+                                        <span class="badge bg-success">POST</span>
+                                        <span class="badge bg-warning">PUT</span>
+                                        <span class="badge bg-danger">DELETE</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>/api/maintenance-types/</code></td>
+                                    <td>Maintenance types</td>
+                                    <td>
+                                        <span class="badge bg-primary">GET</span>
+                                        <span class="badge bg-secondary">Read Only</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>/api/inspections/</code></td>
+                                    <td>Inspection records</td>
+                                    <td>
+                                        <span class="badge bg-primary">GET</span>
+                                        <span class="badge bg-success">POST</span>
+                                        <span class="badge bg-warning">PUT</span>
+                                        <span class="badge bg-danger">DELETE</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>/api/profiles/</code></td>
+                                    <td>User profiles</td>
+                                    <td>
+                                        <span class="badge bg-primary">GET</span>
+                                        <span class="badge bg-secondary">Read Only</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authentication Methods -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-key"></i>
+                        Authentication
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p>The API supports two authentication methods:</p>
+
+                    <h5>1. Session Authentication (Browser)</h5>
+                    <p>When logged in through the web interface, API requests are automatically authenticated.</p>
+
+                    <h5>2. Basic Authentication (External Apps)</h5>
+                    <pre><code>curl -u username:password http://127.0.0.1:8000/api/equipment/</code></pre>
+
+                    <div class="alert alert-info mt-3">
+                        <strong>Note:</strong> All API endpoints require authentication.
+                        Anonymous users will receive a 403 Forbidden response.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Examples -->
+            <div class="card mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-code-slash"></i>
+                        Usage Examples
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <h5>Python Example:</h5>
+                    <pre class="bg-light p-3 rounded"><code>import requests
+
+# Get all equipment
+response = requests.get(
+    'http://127.0.0.1:8000/api/equipment/',
+    auth=('username', 'password')
+)
+equipment = response.json()
+print(f"Total equipment: {equipment['count']}")
+
+# Search for specific equipment
+response = requests.get(
+    'http://127.0.0.1:8000/api/equipment/',
+    params={'search': 'balance'},
+    auth=('username', 'password')
+)
+results = response.json()['results']</code></pre>
+
+                    <h5 class="mt-4">JavaScript Example:</h5>
+                    <pre class="bg-light p-3 rounded"><code>// Fetch equipment data
+fetch('http://127.0.0.1:8000/api/equipment/', {
+    headers: {
+        'Authorization': 'Basic ' + btoa('username:password')
+    }
+})
+.then(response => response.json())
+.then(data => console.log(data));</code></pre>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            {% if user.is_authenticated %}
+            <div class="text-center mb-5">
+                <a href="/api/equipment/" class="btn btn-primary btn-lg me-3">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    Browse Equipment API
+                </a>
+                <a href="{% url 'equipment:dashboard' %}" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-speedometer2"></i>
+                    Return to Dashboard
+                </a>
+            </div>
+            {% else %}
+            <div class="text-center mb-5">
+                <a href="{% url 'users:login' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Log In to Access API
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Documentation Link -->
+            <div class="card border-secondary">
+                <div class="card-body text-center">
+                    <h5>Need More Information?</h5>
+                    <p class="text-muted">
+                        Detailed API documentation is available in the project repository.
+                    </p>
+                    <a href="#" class="btn btn-outline-secondary" onclick="alert('See API_DOCUMENTATION.md in the project root'); return false;">
+                        <i class="bi bi-file-earmark-text"></i>
+                        View Full Documentation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

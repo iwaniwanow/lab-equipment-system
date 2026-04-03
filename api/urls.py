@@ -5,6 +5,7 @@ from .views import (
     MaintenanceRecordViewSet, MaintenanceTypeViewSet,
     InspectionViewSet, UserProfileViewSet
 )
+from .root_views import api_root_view
 
 app_name = 'api'
 
@@ -19,6 +20,7 @@ router.register(r'inspections', InspectionViewSet, basename='inspection')
 router.register(r'profiles', UserProfileViewSet, basename='profile')
 
 urlpatterns = [
+    path('', api_root_view, name='api-root'),
     path('', include(router.urls)),
 ]
 

@@ -110,3 +110,13 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"Profile of {self.user.username}"
 
+    @property
+    def full_name(self):
+        """Return full name of the user"""
+        if self.user.first_name and self.user.last_name:
+            return f"{self.user.first_name} {self.user.last_name}"
+        elif self.user.first_name:
+            return self.user.first_name
+        elif self.user.last_name:
+            return self.user.last_name
+        return self.user.username

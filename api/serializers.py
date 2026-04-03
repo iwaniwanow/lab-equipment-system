@@ -46,12 +46,19 @@ class EquipmentCategorySerializer(serializers.ModelSerializer):
 class EquipmentListSerializer(serializers.ModelSerializer):
     manufacturer_name = serializers.CharField(source='manufacturer.name', read_only=True)
     category_name = serializers.CharField(source='category.name', read_only=True)
+    location_name = serializers.SerializerMethodField()
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     
     class Meta:
         model = Equipment
         fields = ['id', 'asset_number', 'name', 'manufacturer', 'manufacturer_name', 
-                  'category', 'category_name', 'model', 'serial_number', 'status', 'status_display']
+                  'category', 'category_name', 'model', 'serial_number',
+                  'location_name', 'status', 'status_display', 'commissioning_date']
+
+    def get_location_name(self, obj):
+        if obj.location:
+            return str(obj.location)
+        return obj.location_old if obj.location_old else None
 
 
 class EquipmentDetailSerializer(serializers.ModelSerializer):
@@ -98,16 +105,18 @@ class MaintenanceRecordSerializer(serializers.ModelSerializer):
 
 class InspectionSerializer(serializers.ModelSerializer):
     equipment_name = serializers.CharField(source='equipment.name', read_only=True)
-    inspector_name = serializers.SerializerMethodField()
-    result_display = serializers.CharField(source='get_result_display', read_only=True)
-    
+    technician_name = serializers.SerializerMethodField()
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+
     class Meta:
         model = Inspection
-        fields = ['id', 'equipment', 'equipment_name', 'inspection_date', 'next_due_date',
-                  'inspector', 'inspector_name', 'result', 'result_display', 
+        fields = ['id', 'equipment', 'equipment_name', 'inspection_type', 'inspection_date',
+                  'next_inspection_date', 'technician', 'technician_name', 'status', 'status_display',
                   'findings', 'corrective_actions']
-        read_only_fields = ['next_due_date']
-    
-    def get_inspector_name(self, obj):
-        return f"{obj.inspector.first_name} {obj.inspector.last_name}"
+        read_only_fields = ['next_inspection_date']
+
+    def get_technician_name(self, obj):
+        if obj.technician:
+            return f"{obj.technician.first_name} {obj.technician.last_name}"
+        return None
 

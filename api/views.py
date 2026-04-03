@@ -12,23 +12,24 @@ from .serializers import (
     MaintenanceRecordSerializer, MaintenanceTypeSerializer,
     InspectionSerializer, UserProfileSerializer
 )
+from .permissions import IsAuthenticatedOrReadOnly, IsAdminOrManagerOrReadOnly
 
 
 class EquipmentViewSet(viewsets.ModelViewSet):
     """
     API endpoint for equipment management
     Supports: list, retrieve, create, update, delete
-    Filtering by status, category, manufacturer
+    Filtering by status, category, manufacturer, location
     Search by name, asset_number, serial_number
     """
-    queryset = Equipment.objects.select_related('manufacturer', 'category').all()
+    queryset = Equipment.objects.select_related('manufacturer', 'category', 'location').all()
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['status', 'category', 'manufacturer']
+    filterset_fields = ['status', 'category', 'manufacturer', 'location']
     search_fields = ['name', 'asset_number', 'serial_number', 'model']
-    ordering_fields = ['asset_number', 'name', 'acquisition_date']
-    ordering = ['-acquisition_date']
-    
+    ordering_fields = ['asset_number', 'name', 'commissioning_date', 'created_at']
+    ordering = ['-created_at']
+
     def get_serializer_class(self):
         if self.action == 'list':
             return EquipmentListSerializer
@@ -133,18 +134,18 @@ class InspectionViewSet(viewsets.ModelViewSet):
     """
     API endpoint for inspections
     """
-    queryset = Inspection.objects.select_related('equipment', 'inspector').all()
+    queryset = Inspection.objects.select_related('equipment', 'inspection_type', 'technician').all()
     serializer_class = InspectionSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['equipment', 'result', 'inspector']
-    ordering_fields = ['inspection_date', 'next_due_date']
+    filterset_fields = ['equipment', 'status', 'technician', 'inspection_type']
+    ordering_fields = ['inspection_date', 'next_inspection_date']
     ordering = ['-inspection_date']
     
     @action(detail=False, methods=['get'])
     def failed(self, request):
         """Get failed inspections"""
-        failed = self.queryset.filter(result='failed')
+        failed = self.queryset.filter(status='failed')
         serializer = self.get_serializer(failed, many=True)
         return Response(serializer.data)
 
