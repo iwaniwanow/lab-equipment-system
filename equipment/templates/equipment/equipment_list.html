@@ -31,7 +31,7 @@
     </div>
     <div class="card-body">
         <form method="get" class="row g-3">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="category" class="form-label">Категория</label>
                 <select name="category" id="category" class="form-select">
                     <option value="">Всички категории</option>
@@ -40,7 +40,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="status" class="form-label">Статус</label>
                 <select name="status" id="status" class="form-select">
                     <option value="">Всички статуси</option>
@@ -53,7 +53,18 @@
                     <option value="out_of_service" {% if request.GET.status == "out_of_service" %}selected{% endif %}>Извън експлоатация</option>
                 </select>
             </div>
-            <div class="col-md-4 d-flex align-items-end gap-2">
+            <div class="col-md-3">
+                <label for="tag" class="form-label">Таг</label>
+                <select name="tag" id="tag" class="form-select">
+                    <option value="">Всички тагове</option>
+                    {% for tag in tags %}
+                        <option value="{{ tag.id }}" {% if request.GET.tag == tag.id|stringformat:"s" %}selected{% endif %}>
+                            {{ tag.name }} ({{ tag.equipment_count }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end gap-2">
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-funnel"></i> Филтрирай
                 </button>
@@ -74,6 +85,7 @@
                         <th class="ps-3">ASSET Номер</th>
                         <th>Наименование</th>
                         <th>Категория</th>
+                        <th>Тагове</th>
                         <th>Локация</th>
                         <th>Статус</th>
                         <th style="width: 220px;">Действия</th>
@@ -89,6 +101,19 @@
                                 <span class="badge bg-light text-dark border">
                                     <i class="bi bi-tag"></i> {{ eq.category.name }}
                                 </span>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if eq.tags.all %}
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for tag in eq.tags.all %}
+                                    <span class="badge" style="background-color: {{ tag.color }}; font-size: 0.75rem;" title="{{ tag.description }}">
+                                        {{ tag.name }}
+                                    </span>
+                                    {% endfor %}
+                                </div>
                             {% else %}
                                 <span class="text-muted">—</span>
                             {% endif %}
@@ -121,7 +146,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-5">
+                        <td colspan="7" class="text-center text-muted py-5">
                             <i class="bi bi-inbox" style="font-size: 3rem;"></i>
                             <p class="mb-0 mt-2">Няма намерено оборудване.</p>
                         </td>

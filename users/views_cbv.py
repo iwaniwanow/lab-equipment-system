@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView
-from .forms import CustomUserCreationForm, UserProfileUpdateForm
+from .forms import CustomUserCreationForm, UserProfileForm
 from .models import UserProfile
 
 
@@ -64,7 +64,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
 class ProfileEditView(LoginRequiredMixin, UpdateView):
     """Edit User Profile"""
     model = UserProfile
-    form_class = UserProfileUpdateForm
+    form_class = UserProfileForm
     template_name = 'users/profile_edit.html'
     success_url = reverse_lazy('users:profile')
 

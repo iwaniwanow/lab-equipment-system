@@ -10,16 +10,16 @@ def create_user_profile(sender, instance, created, **kwargs):
     Автоматично създаване на UserProfile при създаване на нов потребител
     """
     if created:
-        UserProfile.objects.get_or_create(user=instance)
+        # Use get_or_create to avoid duplicates
+        UserProfile.objects.get_or_create(
+            user=instance,
+            defaults={'role': 'viewer', 'is_approved': False}
+        )
 
 
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    """
-    Запазване на UserProfile при запазване на User
-    """
-    if hasattr(instance, 'profile'):
-        instance.profile.save()
+# Removed the save_user_profile signal as it causes issues
+# Profile should be saved explicitly when needed
+
 
 
 @receiver(post_save, sender=UserProfile)

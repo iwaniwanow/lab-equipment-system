@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Equipment, EquipmentCategory, Manufacturer, Department, Location, Technician
+from .models import Equipment, EquipmentCategory, Manufacturer, Department, Location, Technician, Tag, Document
 
 
 @admin.register(Equipment)
@@ -7,6 +7,9 @@ class EquipmentAdmin(admin.ModelAdmin):
     list_display = ['asset_number', 'name', 'category', 'manufacturer', 'status']
     list_filter = ['status', 'category', 'manufacturer']
     search_fields = ['asset_number', 'name', 'serial_number']
+
+    # Note: Tags и Documents се управляват през техните собствени admin интерфейси
+    # защото M2M връзките са дефинирани в Tag и Document моделите
 
 
 @admin.register(EquipmentCategory)
@@ -67,3 +70,34 @@ class TechnicianAdmin(admin.ModelAdmin):
     def get_full_name(self, obj):
         return obj.get_full_name()
     get_full_name.short_description = 'Име'
+
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ['name', 'color', 'equipment_count', 'is_active']
+    list_filter = ['is_active']
+    search_fields = ['name', 'description']
+    filter_horizontal = ['equipment']
+
+    def equipment_count(self, obj):
+        return obj.equipment_count()
+    equipment_count.short_description = 'Брой оборудване'
+
+
+@admin.register(Document)
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = ['name', 'document_type', 'uploaded_by', 'uploaded_at', 'equipment_count', 'is_active']
+    list_filter = ['document_type', 'is_active', 'uploaded_at']
+    search_fields = ['name', 'description']
+    filter_horizontal = ['equipment']
+    readonly_fields = ['uploaded_at', 'uploaded_by']
+
+    def equipment_count(self, obj):
+        return obj.equipment_count()
+    equipment_count.short_description = 'Брой оборудване'
+
+    def save_model(self, request, obj, form, change):
+        if not change:  # Only on creation
+            obj.uploaded_by = request.user
+        super().save_model(request, obj, form, change)
+

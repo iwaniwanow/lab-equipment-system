@@ -6,14 +6,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden
 from django.db.models import Q, Count
-from .models import Equipment, EquipmentCategory, Manufacturer, Department, Location, Technician, Tag, Document
+from .models import Equipment, EquipmentCategory, Manufacturer, Department, Location, Technician
 from .forms import EquipmentForm, EquipmentCategoryForm, ManufacturerForm, DepartmentForm, LocationForm, TechnicianForm
-
-
-# Custom Error Handlers
-def custom_404(request, exception):
-    """Custom 404 error handler"""
-    return render(request, 'equipment/404.html', status=404)
 
 
 # Mixins for permissions
@@ -92,7 +86,7 @@ class EquipmentListView(ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        queryset = Equipment.objects.select_related('category', 'manufacturer', 'location').prefetch_related('tags').all()
+        queryset = Equipment.objects.select_related('category', 'manufacturer', 'location').all()
 
         # Filter by category
         category_id = self.request.GET.get('category')
@@ -104,11 +98,6 @@ class EquipmentListView(ListView):
         if status:
             queryset = queryset.filter(status=status)
 
-        # Filter by tag
-        tag_id = self.request.GET.get('tag')
-        if tag_id:
-            queryset = queryset.filter(tags__id=tag_id)
-
         # Search
         search = self.request.GET.get('search')
         if search:
@@ -119,13 +108,12 @@ class EquipmentListView(ListView):
                 Q(model__icontains=search)
             )
 
-        return queryset.distinct()
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = EquipmentCategory.objects.all()
         context['status_choices'] = Equipment.STATUS_CHOICES
-        context['tags'] = Tag.objects.filter(is_active=True).annotate(equipment_count=Count('equipment'))
         return context
 
 

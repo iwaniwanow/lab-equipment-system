@@ -461,3 +461,90 @@ class Technician(models.Model):
 
         super().save(*args, **kwargs)
 
+
+# ======================================
+# Many-to-Many Relationships Models
+# ======================================
+
+class Tag(models.Model):
+    """
+    Етикети/Тагове за категоризация на оборудването
+    Many-to-Many relationship с Equipment
+    """
+    name = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name="Име на таг"
+    )
+    color = models.CharField(
+        max_length=7,
+        default='#007bff',
+        verbose_name="Цвят (hex)"
+    )
+    description = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Описание"
+    )
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # Many-to-Many relationship with Equipment
+    equipment = models.ManyToManyField(
+        Equipment,
+        related_name='tags',
+        blank=True,
+        verbose_name="Оборудване"
+    )
+
+    class Meta:
+        verbose_name = "Таг"
+        verbose_name_plural = "Тагове"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def equipment_count(self):
+        return self.equipment.count()
+
+
+class Document(models.Model):
+    """
+    Документи свързани с оборудването
+    Many-to-Many relationship с Equipment
+    """
+    DOCUMENT_TYPE_CHOICES = [
+        ('manual', 'Ръководство'),
+        ('certificate', 'Сертификат'),
+        ('protocol', 'Протокол'),
+        ('validation', 'Валидация'),
+        ('sop', 'SOP'),
+        ('drawing', 'Чертеж'),
+        ('photo', 'Снимка'),
+        ('other', 'Друг'),
+    ]
+
+    name = models.CharField(max_length=200, verbose_name="Име на документ")
+    document_type = models.CharField(max_length=20, choices=DOCUMENT_TYPE_CHOICES, default='other', verbose_name="Тип")
+    file = models.FileField(upload_to='equipment_documents/%Y/%m/', verbose_name="Файл")
+    description = models.TextField(blank=True, null=True, verbose_name="Описание")
+    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='uploaded_documents', verbose_name="Качен от")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата на качване")
+    version = models.CharField(max_length=20, blank=True, null=True, verbose_name="Версия")
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
+
+    # Many-to-Many relationship with Equipment
+    equipment = models.ManyToManyField(Equipment, related_name='documents', blank=True, verbose_name="Оборудване")
+
+    class Meta:
+        verbose_name = "Документ"
+        verbose_name_plural = "Документи"
+        ordering = ['-uploaded_at']
+
+    def __str__(self):
+        return f"{self.name} ({self.get_document_type_display()})"
+
+    def equipment_count(self):
+        return self.equipment.count()
+
