@@ -37,6 +37,103 @@ class UserLoginTest(TestCase):
     def test_user_can_login(self):
         response = self.client.post(reverse('users:login'), {'username': 'loginuser', 'password': 'testpass123'})
         self.assertIn(response.status_code, [200, 302])
+
+    def test_unapproved_user_cannot_login(self):
+        """Test that unapproved users cannot login with specific message"""
+        # Create unapproved user
+        unapproved_user = User.objects.create_user(
+            username='unapproved', 
+            password='testpass123',
+            email='unapproved@test.com'
+        )
+        # Profile should be created automatically with is_approved=False
+        self.assertFalse(unapproved_user.profile.is_approved)
+        
+        # Try to login with CORRECT credentials
+        response = self.client.post(
+            reverse('users:login'), 
+            {'username': 'unapproved', 'password': 'testpass123'},
+            follow=True
+        )
+        
+        # Should stay on login page
+        self.assertEqual(response.status_code, 200)
+        
+        # Should see specific message about waiting for approval
+        self.assertContains(response, 'чака одобрение')
+        
+        # User should not be logged in
+        self.assertFalse('_auth_user_id' in self.client.session)
+
+    def test_approved_user_can_login(self):
+        """Test that approved users CAN login"""
+        # Create approved user
+        approved_user = User.objects.create_user(
+            username='approved',
+            password='testpass123',
+            email='approved@test.com'
+        )
+        approved_user.profile.is_approved = True
+        approved_user.profile.save()
+
+        # Try to login
+        response = self.client.post(
+            reverse('users:login'),
+            {'username': 'approved', 'password': 'testpass123'}
+        )
+
+        # Should redirect (successful login)
+        self.assertEqual(response.status_code, 302)
+
+    def test_superuser_can_login_without_approval(self):
+        """Test that superusers can login even without approval"""
+        # Create superuser without approval
+        superuser = User.objects.create_superuser(
+            username='superuser',
+            password='adminpass',
+            email='super@test.com'
+        )
+        # Explicitly set is_approved to False
+        superuser.profile.is_approved = False
+        superuser.profile.save()
+        
+        # Superuser should still be able to login
+        response = self.client.post(
+            reverse('users:login'),
+            {'username': 'superuser', 'password': 'adminpass'}
+        )
+        
+        # Should redirect (successful login)
+        self.assertEqual(response.status_code, 302)
+    
+    def test_wrong_password_shows_generic_error(self):
+        """Test that wrong password shows generic error, not approval message"""
+        # Create unapproved user
+        unapproved_user = User.objects.create_user(
+            username='testuser',
+            password='correctpass',
+            email='test@test.com'
+        )
+        self.assertFalse(unapproved_user.profile.is_approved)
+        
+        # Try to login with WRONG password
+        response = self.client.post(
+            reverse('users:login'),
+            {'username': 'testuser', 'password': 'wrongpass'},
+            follow=True
+        )
+        
+        # Should stay on login page
+        self.assertEqual(response.status_code, 200)
+        
+        # Should NOT see approval message
+        self.assertNotContains(response, 'чака одобрение')
+        
+        # Should see generic invalid login message
+        self.assertContains(response, 'правилно потребителско име и парола')
+        
+        # User should not be logged in
+        self.assertFalse('_auth_user_id' in self.client.session)
 class UserProfileTest(TestCase):
     def setUp(self):
         self.client = Client()

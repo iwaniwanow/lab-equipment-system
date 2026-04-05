@@ -7,7 +7,6 @@ def admin_stats(request):
     """
     Context processor за статистики в админ панела
     """
-    # Проверяваме дали сме в админ панела
     if not request.path.startswith('/admin/'):
         return {}
 

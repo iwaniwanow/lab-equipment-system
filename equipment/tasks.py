@@ -4,7 +4,9 @@ from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
 import logging
+
 logger = logging.getLogger(__name__)
+
 @shared_task(name='equipment.tasks.update_all_equipment_statuses')
 def update_all_equipment_statuses():
     from equipment.models import Equipment
@@ -18,6 +20,7 @@ def update_all_equipment_statuses():
             logger.error(f'Error updating status for {equipment.asset_number}: {e}')
     logger.info(f'Updated {updated_count} equipment statuses')
     return {'total': Equipment.objects.count(), 'updated': updated_count}
+
 @shared_task(name='equipment.tasks.check_maintenance_due')
 def check_maintenance_due(days_ahead=7):
     from maintenance.models import MaintenanceRecord
@@ -34,8 +37,8 @@ def check_maintenance_due(days_ahead=7):
         return {'count': 0}
     sent_count = 0
     for record in due_soon:
-        subject = f'Предстоящ ремонт: {record.equipment.asset_number}'
-        message = f'Оборудване {record.equipment.name} изисква {record.maintenance_type.name} на {record.next_due_date}'
+        subject = f'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ: {record.equipment.asset_number}'
+        message = f'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ {record.equipment.name} пїЅпїЅпїЅпїЅпїЅпїЅпїЅ {record.maintenance_type.name} пїЅпїЅ {record.next_due_date}'
         recipients = User.objects.filter(is_staff=True, is_active=True, email__isnull=False).exclude(email='').values_list('email', flat=True)
         if recipients:
             try:
@@ -44,6 +47,7 @@ def check_maintenance_due(days_ahead=7):
             except Exception as e:
                 logger.error(f'Error sending email: {e}')
     return {'records_count': due_soon.count(), 'emails_sent': sent_count}
+
 @shared_task(name='equipment.tasks.check_inspections_due')
 def check_inspections_due(days_ahead=3):
     from inspections.models import Inspection
@@ -59,8 +63,8 @@ def check_inspections_due(days_ahead=3):
         return {'count': 0}
     sent_count = 0
     for inspection in due_soon:
-        subject = f'Предстояща проверка: {inspection.equipment.asset_number}'
-        message = f'Оборудване {inspection.equipment.name} изисква {inspection.inspection_type.name} на {inspection.next_inspection_date}'
+        subject = f'РџСЂРµРґСЃС‚РѕСЏС‰Р° РёРЅСЃРїРµРєС†РёСЏ: {inspection.equipment.asset_number}'
+        message = f'РћР±РѕСЂСѓРґРІР°РЅРµ {inspection.equipment.name} РёР·РёСЃРєРІР° {inspection.inspection_type.name} РґРѕ {inspection.next_inspection_date}'
         recipients = User.objects.filter(is_staff=True, is_active=True, email__isnull=False).exclude(email='').values_list('email', flat=True)
         if recipients:
             try:

@@ -12,75 +12,110 @@ class CustomUserCreationForm(UserCreationForm):
     """
     email = forms.EmailField(
         required=True,
+        label='Имейл',
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Email address'
+            'placeholder': 'Имейл адрес'
         }),
-        help_text='Required. Enter a valid email address.'
+        help_text='Задължително. Въведете валиден имейл адрес.',
+        error_messages={
+            'required': 'Моля, въведете имейл адрес.',
+            'invalid': 'Въведете валиден имейл адрес.'
+        }
     )
     
     first_name = forms.CharField(
         max_length=150,
         required=True,
+        label='Име',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'First Name'
-        })
+            'placeholder': 'Име'
+        }),
+        error_messages={
+            'required': 'Моля, въведете име.'
+        }
     )
     
     last_name = forms.CharField(
         max_length=150,
         required=True,
+        label='Фамилия',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Last Name'
-        })
+            'placeholder': 'Фамилия'
+        }),
+        error_messages={
+            'required': 'Моля, въведете фамилия.'
+        }
     )
     
     phone = forms.CharField(
         max_length=20,
         required=False,
+        label='Телефон',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': '+359888123456'
         }),
-        help_text='Optional. Format: +999999999'
+        help_text='Незадължително. Формат: +359888123456'
     )
     
     department = forms.ModelChoiceField(
         queryset=Department.objects.filter(is_active=True),
         required=False,
+        label='Звено',
         empty_label="Избери звено",
         widget=forms.Select(attrs={'class': 'form-select'}),
-        help_text='Optional. Select your department'
+        help_text='Незадължително. Изберете вашето звено.'
     )
     
     class Meta:
         model = User
         fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
+        labels = {
+            'username': 'Потребителско име',
+        }
         widgets = {
             'username': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Username'
+                'placeholder': 'Потребителско име'
             }),
         }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['username'].label = 'Потребителско име'
+        self.fields['username'].help_text = 'Задължително. 150 символа или по-малко. Само букви, цифри и @/./+/-/_'
+        self.fields['username'].error_messages = {
+            'required': 'Моля, въведете потребителско име.',
+            'unique': 'Потребител с това име вече съществува.'
+        }
+        
+        self.fields['password1'].label = 'Парола'
+        self.fields['password1'].help_text = 'Паролата трябва да съдържа поне 8 символа и да не е само цифри.'
         self.fields['password1'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Password'
+            'placeholder': 'Парола'
         })
+        self.fields['password1'].error_messages = {
+            'required': 'Моля, въведете парола.'
+        }
+        
+        self.fields['password2'].label = 'Потвърди парола'
         self.fields['password2'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Confirm Password'
+            'placeholder': 'Потвърди парола'
         })
+        self.fields['password2'].error_messages = {
+            'required': 'Моля, потвърдете паролата.'
+        }
     
     def clean_email(self):
         """Validate that email is unique"""
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
-            raise ValidationError('A user with this email already exists.')
+            raise ValidationError('Потребител с този имейл вече съществува.')
         return email
     
     def save(self, commit=True):
@@ -104,21 +139,69 @@ class CustomUserCreationForm(UserCreationForm):
 
 class CustomAuthenticationForm(AuthenticationForm):
     """
-    Custom login form with Bootstrap styling
+    Custom login form with Bootstrap styling (Bulgarian)
+    Includes custom validation for unapproved users
     """
     username = forms.CharField(
+        label='Потребителско име',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Username',
+            'placeholder': 'Въведете потребителско име',
             'autofocus': True
-        })
+        }),
+        error_messages={
+            'required': 'Моля, въведете потребителско име.',
+        }
     )
     password = forms.CharField(
+        label='Парола',
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Password'
-        })
+            'placeholder': 'Въведете парола'
+        }),
+        error_messages={
+            'required': 'Моля, въведете парола.',
+        }
     )
+    
+    error_messages = {
+        'invalid_login': 'Моля, въведете правилно потребителско име и парола. '
+                        'Обърнете внимание, че двете полета могат да са чувствителни към главни и малки букви.',
+        'inactive': 'Този акаунт е неактивен.',
+        'unapproved': 'Вашият акаунт е регистриран успешно, но все още чака одобрение от администратор. '
+                     'Ще получите достъп след одобрението.',
+    }
+    
+    def clean(self):
+        """
+        Custom validation to provide specific message for unapproved users
+        """
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+        
+        if username is not None and password:
+            from django.contrib.auth import authenticate
+            from django.contrib.auth.backends import ModelBackend
+            
+            backend = ModelBackend()
+            user = backend.authenticate(self.request, username=username, password=password)
+            
+            if user is not None:
+                if not user.is_superuser:
+                    if hasattr(user, 'profile'):
+                        if not user.profile.is_approved:
+                            raise ValidationError(
+                                self.error_messages['unapproved'],
+                                code='unapproved',
+                            )
+                
+                self.confirm_login_allowed(user)
+                
+                self.user_cache = user
+            else:
+                raise self.get_invalid_login_error()
+        
+        return self.cleaned_data
 
 
 class UserUpdateForm(forms.ModelForm):

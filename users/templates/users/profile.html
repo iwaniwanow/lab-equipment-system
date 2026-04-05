@@ -96,54 +96,54 @@
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <strong><i class="bi bi-calendar"></i> Дата на назначаване:</strong>
-                            <p>{{ profile_user.profile.hire_date|date:"d.m.Y"|default:"Не е посочена" }}</p>
+                            <strong><i class="bi bi-calendar-check text-primary"></i> Дата на назначаване:</strong>
+                            <p class="text-muted mb-0">{{ profile_user.profile.hire_date|date:"d.m.Y"|default:"Не е посочена" }}</p>
                         </div>
                         <div class="col-md-6">
-                            <strong><i class="bi bi-cake"></i> Рожденна дата:</strong>
-                            <p>{{ profile_user.profile.birth_date|date:"d.m.Y"|default:"Не е посочена" }}</p>
+                            <strong><i class="bi bi-cake2 text-primary"></i> Рожденна дата:</strong>
+                            <p class="text-muted mb-0">{{ profile_user.profile.birth_date|date:"d.m.Y"|default:"Не е посочена" }}</p>
                         </div>
                     </div>
 
-                    <hr>
+                    <hr class="my-4">
 
-                    <div class="mb-3">
-                        <strong><i class="bi bi-chat-text"></i> Биография:</strong>
-                        <p>{{ profile_user.profile.bio|default:"Няма добавена информация."|linebreaks }}</p>
+                    <div class="mb-4">
+                        <strong><i class="bi bi-chat-text-fill text-primary"></i> Биография:</strong>
+                        <p class="text-muted mb-0">{{ profile_user.profile.bio|default:"Няма добавена информация."|linebreaks }}</p>
                     </div>
 
                     {% if profile_user.profile.certifications %}
-                    <div class="mb-3">
-                        <strong><i class="bi bi-award"></i> Сертификати:</strong>
-                        <p>{{ profile_user.profile.certifications|linebreaks }}</p>
+                    <div class="mb-4">
+                        <strong><i class="bi bi-award-fill text-primary"></i> Сертификати:</strong>
+                        <p class="text-muted mb-0">{{ profile_user.profile.certifications|linebreaks }}</p>
                     </div>
                     {% endif %}
 
                     {% if profile_user.profile.address %}
-                    <div class="mb-3">
-                        <strong><i class="bi bi-geo-alt"></i> Адрес:</strong>
-                        <p>{{ profile_user.profile.address|linebreaks }}</p>
+                    <div class="mb-4">
+                        <strong><i class="bi bi-geo-alt-fill text-primary"></i> Адрес:</strong>
+                        <p class="text-muted mb-0">{{ profile_user.profile.address|linebreaks }}</p>
                     </div>
                     {% endif %}
 
                     {% if profile_user.profile.emergency_contact %}
-                    <div class="mb-3">
-                        <strong><i class="bi bi-telephone-plus"></i> Спешен контакт:</strong>
-                        <p>{{ profile_user.profile.emergency_contact }}</p>
+                    <div class="mb-4">
+                        <strong><i class="bi bi-telephone-plus-fill text-primary"></i> Спешен контакт:</strong>
+                        <p class="text-muted mb-0">{{ profile_user.profile.emergency_contact }}</p>
                     </div>
                     {% endif %}
 
-                    <hr>
+                    <hr class="my-4">
 
                     <div class="row">
                         <div class="col-md-6">
                             <small class="text-muted">
-                                <i class="bi bi-calendar-plus"></i> Регистриран: {{ profile_user.date_joined|date:"d.m.Y" }}
+                                <i class="bi bi-calendar-plus"></i> Регистриран: <strong>{{ profile_user.date_joined|date:"d.m.Y" }}</strong>
                             </small>
                         </div>
                         <div class="col-md-6 text-end">
                             <small class="text-muted">
-                                <i class="bi bi-clock-history"></i> Последен вход: {{ profile_user.last_login|date:"d.m.Y H:i"|default:"Никога" }}
+                                <i class="bi bi-clock-history"></i> Последен вход: <strong>{{ profile_user.last_login|date:"d.m.Y H:i"|default:"Никога" }}</strong>
                             </small>
                         </div>
                     </div>

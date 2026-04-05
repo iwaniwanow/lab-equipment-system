@@ -10,13 +10,11 @@ from .models import Equipment, EquipmentCategory, Manufacturer, Department, Loca
 from .forms import EquipmentForm, EquipmentCategoryForm, ManufacturerForm, DepartmentForm, LocationForm, TechnicianForm
 
 
-# Custom Error Handlers
 def custom_404(request, exception):
     """Custom 404 error handler"""
     return render(request, 'equipment/404.html', status=404)
 
 
-# Mixins for permissions
 class UserCanModifyMixin(UserPassesTestMixin):
     """Mixin за проверка дали потребителят може да модифицира основни данни"""
     def test_func(self):
@@ -49,7 +47,6 @@ class UserCanCreateRecordsMixin(UserPassesTestMixin):
         return redirect('equipment:dashboard')
 
 
-# Dashboard View
 class DashboardView(TemplateView):
     """Dashboard с общ преглед на оборудването"""
     template_name = 'equipment/dashboard.html'
@@ -57,11 +54,9 @@ class DashboardView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Update all equipment statuses
         for equipment in Equipment.objects.all():
             equipment.update_status()
 
-        # Statistics
         context['total_equipment'] = Equipment.objects.count()
         context['active'] = Equipment.objects.filter(status='active').count()
         context['pending_validation'] = Equipment.objects.filter(status='pending_validation').count()
@@ -71,7 +66,6 @@ class DashboardView(TemplateView):
         context['maintenance'] = Equipment.objects.filter(status='maintenance').count()
         context['out_of_service'] = Equipment.objects.filter(status='out_of_service').count()
 
-        # Equipment lists for buttons
         context['active_equipment'] = Equipment.objects.filter(status='active')
         context['pending_validation_equipment'] = Equipment.objects.filter(status='pending_validation')
         context['pending_calibration_equipment'] = Equipment.objects.filter(status='pending_calibration')
@@ -83,7 +77,6 @@ class DashboardView(TemplateView):
         return context
 
 
-# Equipment Views
 class EquipmentListView(ListView):
     """Списък с оборудване"""
     model = Equipment
@@ -94,7 +87,6 @@ class EquipmentListView(ListView):
     def get_queryset(self):
         queryset = Equipment.objects.select_related('category', 'manufacturer', 'location').prefetch_related('tags').all()
 
-        # Filter by category
         category_id = self.request.GET.get('category')
         if category_id:
             queryset = queryset.filter(category_id=category_id)
@@ -104,12 +96,10 @@ class EquipmentListView(ListView):
         if status:
             queryset = queryset.filter(status=status)
 
-        # Filter by tag
         tag_id = self.request.GET.get('tag')
         if tag_id:
             queryset = queryset.filter(tags__id=tag_id)
 
-        # Search
         search = self.request.GET.get('search')
         if search:
             queryset = queryset.filter(
@@ -329,8 +319,7 @@ class DepartmentListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = Department.objects.filter(is_active=True).annotate(
-            equipment_count=Count('equipment'),
-            location_count=Count('locations')
+            location_count=Count('locations', distinct=True)
         )
         return queryset
 
@@ -345,7 +334,8 @@ class DepartmentDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         department = self.get_object()
         context['locations'] = department.locations.all()
-        context['equipment'] = department.equipment.all()
+        # Equipment се взема през locations
+        context['equipment'] = Equipment.objects.filter(location__department=department)
         context['technicians'] = department.technicians.filter(is_active=True)
         return context
 

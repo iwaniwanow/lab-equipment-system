@@ -8,8 +8,6 @@ class EquipmentAdmin(admin.ModelAdmin):
     list_filter = ['status', 'category', 'manufacturer']
     search_fields = ['asset_number', 'name', 'serial_number']
 
-    # Note: Tags и Documents се управляват през техните собствени admin интерфейси
-    # защото M2M връзките са дефинирани в Tag и Document моделите
 
 
 @admin.register(EquipmentCategory)

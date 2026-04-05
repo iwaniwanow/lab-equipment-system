@@ -65,86 +65,102 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="{{ profile_form.phone.id_for_label }}" class="form-label">Телефон</label>
+                                <label for="{{ profile_form.phone.id_for_label }}" class="form-label fw-bold">
+                                    <i class="bi bi-telephone-fill text-primary"></i> Телефон
+                                </label>
                                 {{ profile_form.phone }}
                                 {% if profile_form.phone.errors %}
-                                    <div class="text-danger small">{{ profile_form.phone.errors }}</div>
+                                    <div class="invalid-feedback d-block">{{ profile_form.phone.errors }}</div>
                                 {% endif %}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="{{ profile_form.department.id_for_label }}" class="form-label">Звено</label>
+                                <label for="{{ profile_form.department.id_for_label }}" class="form-label fw-bold">
+                                    <i class="bi bi-building text-primary"></i> Звено
+                                </label>
                                 {{ profile_form.department }}
                                 {% if profile_form.department.errors %}
-                                    <div class="text-danger small">{{ profile_form.department.errors }}</div>
+                                    <div class="invalid-feedback d-block">{{ profile_form.department.errors }}</div>
                                 {% endif %}
-                                <small class="text-muted">Звеното, към което принадлежите</small>
+                                <small class="text-muted d-block mt-1">Звеното, към което принадлежите</small>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="{{ profile_form.bio.id_for_label }}" class="form-label">Биография</label>
+                            <label for="{{ profile_form.bio.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-chat-text-fill text-primary"></i> Биография
+                            </label>
                             {{ profile_form.bio }}
                             {% if profile_form.bio.errors %}
-                                <div class="text-danger small">{{ profile_form.bio.errors }}</div>
+                                <div class="invalid-feedback d-block">{{ profile_form.bio.errors }}</div>
                             {% endif %}
-                            <small class="text-muted">Кратко описание за вас (макс. 500 символа)</small>
+                            <small class="text-muted d-block mt-1">Кратко описание за вас (макс. 500 символа)</small>
                         </div>
 
                         <div class="mb-3">
-                            <label for="{{ profile_form.avatar.id_for_label }}" class="form-label">Снимка на профила</label>
+                            <label for="{{ profile_form.avatar.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-image-fill text-primary"></i> Снимка на профила
+                            </label>
                             {{ profile_form.avatar }}
                             {% if profile_form.avatar.errors %}
-                                <div class="text-danger small">{{ profile_form.avatar.errors }}</div>
+                                <div class="invalid-feedback d-block">{{ profile_form.avatar.errors }}</div>
                             {% endif %}
                             {% if user.profile.avatar %}
                                 <div class="mt-2">
                                     <small class="text-muted">Текуща снимка:</small><br>
-                                    <img src="{{ user.profile.avatar.url }}" alt="Текуща снимка" class="rounded" style="max-width: 100px;">
+                                    <img src="{{ user.profile.avatar.url }}" alt="Текуща снимка" class="rounded border" style="max-width: 100px;">
                                 </div>
                             {% endif %}
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="{{ profile_form.birth_date.id_for_label }}" class="form-label">Рожденна дата</label>
+                                <label for="{{ profile_form.birth_date.id_for_label }}" class="form-label fw-bold">
+                                    <i class="bi bi-cake2 text-primary"></i> Рожденна дата
+                                </label>
                                 {{ profile_form.birth_date }}
                                 {% if profile_form.birth_date.errors %}
-                                    <div class="text-danger small">{{ profile_form.birth_date.errors }}</div>
+                                    <div class="invalid-feedback d-block">{{ profile_form.birth_date.errors }}</div>
                                 {% endif %}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="{{ profile_form.emergency_contact.id_for_label }}" class="form-label">Спешен контакт</label>
+                                <label for="{{ profile_form.emergency_contact.id_for_label }}" class="form-label fw-bold">
+                                    <i class="bi bi-telephone-plus-fill text-primary"></i> Спешен контакт
+                                </label>
                                 {{ profile_form.emergency_contact }}
                                 {% if profile_form.emergency_contact.errors %}
-                                    <div class="text-danger small">{{ profile_form.emergency_contact.errors }}</div>
+                                    <div class="invalid-feedback d-block">{{ profile_form.emergency_contact.errors }}</div>
                                 {% endif %}
-                                <small class="text-muted">Име и телефон на близък човек</small>
+                                <small class="text-muted d-block mt-1">Име и телефон на близък човек</small>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="{{ profile_form.address.id_for_label }}" class="form-label">Адрес</label>
+                            <label for="{{ profile_form.address.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-geo-alt-fill text-primary"></i> Адрес
+                            </label>
                             {{ profile_form.address }}
                             {% if profile_form.address.errors %}
-                                <div class="text-danger small">{{ profile_form.address.errors }}</div>
+                                <div class="invalid-feedback d-block">{{ profile_form.address.errors }}</div>
                             {% endif %}
                         </div>
 
                         <div class="mb-3">
-                            <label for="{{ profile_form.certifications.id_for_label }}" class="form-label">Сертификати</label>
+                            <label for="{{ profile_form.certifications.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-award-fill text-primary"></i> Сертификати
+                            </label>
                             {{ profile_form.certifications }}
                             {% if profile_form.certifications.errors %}
-                                <div class="text-danger small">{{ profile_form.certifications.errors }}</div>
+                                <div class="invalid-feedback d-block">{{ profile_form.certifications.errors }}</div>
                             {% endif %}
-                            <small class="text-muted">Списък със сертификати и квалификации (по един на ред)</small>
+                            <small class="text-muted d-block mt-1">Списък със сертификати и квалификации (по един на ред)</small>
                         </div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle"></i> Запази промените
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle-fill"></i> Запази промените
                             </button>
-                            <a href="{% url 'users:profile' %}" class="btn btn-secondary">
-                                <i class="bi bi-x-circle"></i> Отказ
+                            <a href="{% url 'users:profile' %}" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-x-circle-fill"></i> Отказ
                             </a>
                         </div>
                     </form>

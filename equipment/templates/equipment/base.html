@@ -96,7 +96,14 @@
                             <li><a class="dropdown-item" href="/admin/"><i class="bi bi-shield-lock"></i> Admin Panel</a></li>
                             {% endif %}
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'users:logout' %}"><i class="bi bi-box-arrow-right"></i> Излез</a></li>
+                            <li>
+                                <form method="post" action="{% url 'users:logout' %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger" style="border: none; background: none; cursor: pointer; width: 100%; text-align: left;">
+                                        <i class="bi bi-box-arrow-right"></i> Излез
+                                    </button>
+                                </form>
+                            </li>
                         </ul>
                     </li>
                     {% else %}

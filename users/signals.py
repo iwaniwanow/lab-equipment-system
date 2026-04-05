@@ -10,16 +10,10 @@ def create_user_profile(sender, instance, created, **kwargs):
     Автоматично създаване на UserProfile при създаване на нов потребител
     """
     if created:
-        # Use get_or_create to avoid duplicates
         UserProfile.objects.get_or_create(
             user=instance,
             defaults={'role': 'viewer', 'is_approved': False}
         )
-
-
-# Removed the save_user_profile signal as it causes issues
-# Profile should be saved explicitly when needed
-
 
 
 @receiver(post_save, sender=UserProfile)
@@ -30,11 +24,8 @@ def create_technician_profile(sender, instance, **kwargs):
     """
     from equipment.models import Technician
 
-    # Проверка дали потребителят е одобрен и е техник
     if instance.is_approved and instance.role == 'technician':
-        # Проверка дали вече има Technician профил
         if not hasattr(instance.user, 'technician_profile'):
-            # Създаване на Technician профил
             Technician.objects.create(
                 user=instance.user,
                 first_name=instance.user.first_name,
@@ -45,5 +36,4 @@ def create_technician_profile(sender, instance, **kwargs):
                 specialization='general',
                 is_active=True
             )
-
 
