@@ -95,7 +95,7 @@ class DocumentAdmin(admin.ModelAdmin):
     equipment_count.short_description = 'Брой оборудване'
 
     def save_model(self, request, obj, form, change):
-        if not change:  # Only on creation
+        if not change:
             obj.uploaded_by = request.user
         super().save_model(request, obj, form, change)
 
